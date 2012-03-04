@@ -1,0 +1,15 @@
+      table {border: 1px black solid; border-collapse: collapse; width: 700px;}
+      .buttonholder {width: 750px;}
+      td {border: 1px black solid; padding: 3px;}
+      h1 {font-size: 160%; padding-top: 5px;}
+      h2 {font-size: 140%; padding-top: 5px;}
+      h3 {font-size: 120%; padding-top: 5px;}
+      h4 {font-size: 105%; padding-top: 5px;}
+      h1.liscinfo {font-size: 120%; text-align: center; }
+      ul.liscinfo {list-style-type: none; padding-left: 5px;}
+      #liscinfo {overflow: auto; background-color: #ffffff; font-weight: bold; width: 350px; height: 220px; border: 3px outset black; padding: 5px; margin: 5px; font-size: 10px; background-image:url('http://alchemake.com/cardbg.jpg')}
+      .alchemakebutton {float: right; font-weight: bold; padding: 5px; background: #dddd99; margin-top: 5px; border-color: #cccc88;}
+      #page {width: 750px; border: 3px outset black; background-image:url('http://alchemake.com/backdrop.jpg')}
+      .noticebox {background:none repeat scroll 0 0 #EEEEFF; border:5px outset black; font-weight:bold; margin:10px; padding:2px 10px;}
+      #returnbutton {margin: 5px; width: 200px; text-align: center; font-size: 200%; background: white; border: gray outset 3px;}
+      .disabled-next {color: #808080}
