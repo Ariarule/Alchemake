@@ -1,20 +1,10 @@
 <?php
-require_once('alchemake-inc.php');
-require_once('random-name.php');
-if ($alphamode) {
-  context_setup(TRUE);
-  $userid = '6897197ae54b3206da04390198a4d8fd46d8b803';
-  restore_error_handler(); //on-screen errors when testing
-  }
-else {
-  context_setup();
-  }
 
-if (!time_nonce($_GET['time'],$_GET['nonce'])) {
-  bounce_back("Nonce Mismatch",NONCEERR);
-  }
+class AlchemartController extends AlchemakeController {
+  
+}
 
-$ay_table =  get_inventory_table($userid,1);
+/*$ay_table =  get_inventory_table($userid,1);
 
 ?>
 <link href="<?php echo $base_url;?>alchemake.css?v=<?php echo $version;?>" rel="stylesheet" type="text/css"/>
@@ -22,7 +12,7 @@ $ay_table =  get_inventory_table($userid,1);
 <div id ="page">
 <img src="<?php echo $base_url;?>alchemart.png?v=<?php echo $version;?>" alt="Welcome to Alchemart" />
 <div id="martinfo">All items AY 50 except as marked.
-<?php 
+<?php
 
 if (isset($_POST['itemno'])) {
   $_POST['itemno'] = (int)$_POST['itemno'];
@@ -35,10 +25,10 @@ if (isset($_POST['itemno'])) {
     else {
       $success = add_items($userid,$_POST['itemno'],$_POST['qty']);
       if ($success) {
-	echo "<div class=\"noticebox\">Success! You got {$_POST['qty']}x {$items[$_POST['itemno']]['name']}</div>";
-	$cost_sql = "UPDATE `inventory` SET `qty` = `qty` - $cost WHERE `userid` = '$userid' AND `itemid` = 1 LIMIT 1";
-	$cost_r = mysql_query($cost_sql,$mysql_link);
-	}
+  echo "<div class=\"noticebox\">Success! You got {$_POST['qty']}x {$items[$_POST['itemno']]['name']}</div>";
+  $cost_sql = "UPDATE `inventory` SET `qty` = `qty` - $cost WHERE `userid` = '$userid' AND `itemid` = 1 LIMIT 1";
+  $cost_r = mysql_query($cost_sql,$mysql_link);
+  }
       }
     }
   }
@@ -57,4 +47,4 @@ echo "You currently have AY {$ay_table[1]['available']} available.</div>";
 <?php } ?>
 
 <div style="clear: both;"><?php return_button();?></div>
-</div>
+</div> */

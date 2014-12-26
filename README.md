@@ -1,19 +1,16 @@
-Alchemake is a game that I created as a hobby in 2010. Reliance on the old
-Facebook APIs caused it to stop working in late 2011 or so. The version
-presented here is NOT complete and DOES NOT WORK. I might clean it up later as a
-stand-alone site. -- Nic, 2012-03-04
+Alchemake is a game that I originally created as a hobby in 2010. Reliance on the old Facebook APIs caused it to stop working in late 2011 or so. In early 2015 it was relauched as stand-alone site. -- Nic, 2012-03-04
 
---------------------------------------------------------------------------------
+------
 
-Copyright (c) 2010-2011, Nicholas Smith
+Copyright (c) 2010-2015, Nicholas Smith
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    Redistributions of source code must retain the above copyright notice, this
+* Redistributions of source code must retain the above copyright notice, this
 list of conditions and the following disclaimer.
-    Redistributions in binary form must reproduce the above copyright notice,
+* Redistributions in binary form must reproduce the above copyright notice,
 this list of conditions and the following disclaimer in the documentation and/or
 other materials provided with the distribution.
 
