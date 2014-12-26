@@ -1,5 +1,9 @@
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
+-- TODO: Possibly have combos and suggestions look to 
+-- recipe table, with the recipe ID moved from suggestions
+-- to combos when accepted
+
 --
 -- Table structure for table `combinations`
 --
@@ -101,9 +105,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `rank` tinyint(3) unsigned NOT NULL,
   `last_drop` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_allowence` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `campaign` varchar(64) DEFAULT 'revenge',
-  `session` smallint(5) DEFAULT '1',
-  `main_order` varchar(4) NOT NULL DEFAULT 'CTIU' COMMENT 'Order for index.php C=Campaign, T=Trade, I=Items, U=Userinfo',
+  `main_order` varchar(4) NOT NULL DEFAULT 'TIU' COMMENT 'Order for index.php T=Trade, I=Items, U=Userinfo',
   PRIMARY KEY (`userid`),
   UNIQUE KEY `nickname` (`nickname`)
 );
