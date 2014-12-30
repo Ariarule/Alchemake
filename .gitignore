@@ -1,0 +1,6 @@
+#Phalcon
+/cache/
+/config/development/
+
+#Project specific
+*.ini

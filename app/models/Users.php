@@ -2,6 +2,14 @@
 
 class User extends Phalcon\Mvc\Model {
 
+  protected $userid; //part of login, should not be read out
+  public $networkid;
+  public $nickname;
+  public $rank;
+  public $last_drop;
+  public $last_allowence;
+  public $main_order;
+
   public function change_nom ($userid,$newnom) {
     global $mysql_link;
     $sql = "UPDATE `users` SET `nickname` = '$newnom' WHERE `users`.`userid` = '$userid' LIMIT 1;";

@@ -2,6 +2,13 @@ Alchemake is a game that I originally created as a hobby in 2010. Reliance on th
 
 ------
 
+Installation:
+
+* Rename db.ini.format to db.ini and fill in the database connection settings (MySQL or MariaDB)
+* Run alchemake.sql against the database to create the tables.
+
+------
+
 Copyright (c) 2010-2015, Nicholas Smith
 All rights reserved.
 

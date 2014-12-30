@@ -1,7 +1,7 @@
 <?php
 
 class AlchemartController extends AlchemakeController {
-  
+
 }
 
 /*$ay_table =  get_inventory_table($userid,1);

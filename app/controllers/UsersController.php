@@ -2,6 +2,10 @@
 
 class UserController extends AlchemakeController {
 
+  public function newAction() {
+    
+  }
+
   private function do_drops($time_from_ay,$time_from_drop) {
     if ($time_from_ay > 604801) {
       $allowence = get_allowence();
