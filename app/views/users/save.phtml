@@ -1,0 +1,24 @@
+<?php ?>
+<h1>Save form goes here!</h1>
+<?php
+use Phalcon\Forms\Form,
+    Phalcon\Forms\Element\Text,
+    Phalcon\Forms\Element\Password,
+    Phalcon\Forms\Element\Email,
+    Phalcon\Forms\Element\Submit;
+
+$form = new Form();
+
+$form->add(new     Text('nickname'));
+$form->add(new    Email('emailaddress'));
+$form->add(new Password('networkcredential'));
+$form->add(new  Submit('save'));
+
+foreach ($form as $element) {
+  //standard Phalcon form handling per Doc w/ minor modifications
+  $messages = $form->getMessagesFor($element->getName());
+  foreach ($messages as $message) {
+    echo $message;
+  }
+  echo $element;
+}

@@ -1,9 +1,17 @@
 <?php
 
-class UserController extends AlchemakeController {
+class UsersController extends AlchemakeController {
+
+  public function saveAction() {
+  //displays form
+  }
 
   public function newAction() {
-    
+
+  }
+
+  public function indexAction() {
+    //TODO: "Your account" screen
   }
 
   private function do_drops($time_from_ay,$time_from_drop) {
@@ -49,6 +57,7 @@ class UserController extends AlchemakeController {
     }
 
   public function change_nom () {
+    ?>
     <link rel="stylesheet" type="text/css" href="<?php echo $base_url;?>alchemake.css?v=<?php echo $version;?>" />
     <div id="page">
     <?php
@@ -84,7 +93,7 @@ class UserController extends AlchemakeController {
   protected function random_name($fnames,$lnames,$append = '') {
     $fullname = [];
     foreach ([$fnames,$lnames] as $names) {
-      $fullname[] = $name[array_rand($name);
+      $fullname[] = $name[array_rand($name)];
       }
     $fullname[] = $append;
     implode('_',$fullname);

@@ -1,8 +1,8 @@
 <?php
 
-class User extends Phalcon\Mvc\Model {
+class Users extends Phalcon\Mvc\Model {
 
-  protected $userid; //part of login, should not be read out
+  public $userid;
   public $networkid;
   public $nickname;
   public $rank;
@@ -10,6 +10,10 @@ class User extends Phalcon\Mvc\Model {
   public $last_allowence;
   public $main_order;
 
+  protected $emailaddress;
+  protected $networkcredential;
+
+  /*
   public function change_nom ($userid,$newnom) {
     global $mysql_link;
     $sql = "UPDATE `users` SET `nickname` = '$newnom' WHERE `users`.`userid` = '$userid' LIMIT 1;";
@@ -169,5 +173,5 @@ class User extends Phalcon\Mvc\Model {
         }
       }
     return FALSE;
-  }
+  } */
 }

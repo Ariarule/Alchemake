@@ -1,6 +1,6 @@
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
--- TODO: Possibly have combos and suggestions look to 
+-- TODO: Possibly have combos and suggestions look to
 -- recipe table, with the recipe ID moved from suggestions
 -- to combos when accepted
 
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `trades` (
   `status` enum('pending','rejected','counteroffered','withdrawn','complete') NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`tradeid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=64 ;
+);
 
 -- --------------------------------------------------------
 
@@ -100,7 +100,9 @@ CREATE TABLE IF NOT EXISTS `trades` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userid` varchar(255) NOT NULL,
-  `networkid` varchar(255) NOT NULL,
+  `networkid` enum('email','cookie-only') NOT NULL,
+  `emailaddress` varchar(255) NULL,
+  `networkcredential` varchar(255) NOT NULL,
   `nickname` varchar(60) NOT NULL,
   `rank` tinyint(3) unsigned NOT NULL,
   `last_drop` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
