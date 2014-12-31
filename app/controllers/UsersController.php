@@ -10,10 +10,10 @@ class UsersController extends AlchemakeController {
     $values['nickname'] = $this->request->getPost("nickname");
     $values['emailaddress'] = $this->request->getPost("emailaddress");
     $values['networkcredential'] = $this->security->hash($this->request->getPost("password"));
-    if (FALSE && $this->nonce->check($this->request->getPost("time"),
+    if ($this->nonce->check($this->request->getPost("time"),
       $this->request->getPost("hash"))) {
-        //$user = new Users();
-        //$user->save($values);
+        $user = new Users();
+        $user->save($values);
       }
     else {
       echo $this->request->getPost("time") . " ";
