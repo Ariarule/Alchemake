@@ -4,6 +4,17 @@ $this->tag->setDocType(Tag::HTML5);
 echo $this->tag->getDocType();
 ?>
 
-<h1>Alchemake</h1><!--main-->
 
+<html>
+<head>
+  <style>
+    label {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<h1>Alchemake</h1><!--main-->
 <?php echo $this->getContent() ?>
+</body>
+</html>

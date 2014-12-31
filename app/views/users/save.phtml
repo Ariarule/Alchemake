@@ -1,24 +1,15 @@
-<?php ?>
-<h1>Save form goes here!</h1>
-<?php
-use Phalcon\Forms\Form,
-    Phalcon\Forms\Element\Text,
-    Phalcon\Forms\Element\Password,
-    Phalcon\Forms\Element\Email,
-    Phalcon\Forms\Element\Submit;
+<p><?php $this->flashSession->output() ?></p>
 
-$form = new Form();
-
-$form->add(new     Text('nickname'));
-$form->add(new    Email('emailaddress'));
-$form->add(new Password('networkcredential'));
-$form->add(new  Submit('save'));
-
-foreach ($form as $element) {
-  //standard Phalcon form handling per Doc w/ minor modifications
-  $messages = $form->getMessagesFor($element->getName());
-  foreach ($messages as $message) {
-    echo $message;
-  }
-  echo $element;
-}
+<p>Enter a password and email address to save your game progress: </p>
+<form method="POST">
+  <label>Nickname:
+    <input type="text" placeholder="Hello, my name is..." name="nickname"/>
+  </label>
+  <label>Email:
+    <input type="email" placeholder="you@example.com" name="emailaddress" />
+  </label>
+  <label>Password:
+    <input type="password" name="password"/>
+  </label>
+  <input type="submit" value="Save!" />
+</form>

@@ -2,5 +2,4 @@
 
 class AlchemakeController extends \Phalcon\Mvc\Controller {
 
-
 }

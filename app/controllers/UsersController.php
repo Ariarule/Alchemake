@@ -3,7 +3,10 @@
 class UsersController extends AlchemakeController {
 
   public function saveAction() {
-  //displays form
+    $values['nickname'] = $this->request->getPost("nickname");
+    $values['emailaddress'] = $this->request->getPost("emailaddress");
+    $values['networkcredential'] = $this->security->hash($this->request->getPost("password"));
+    $this->flash->success("Test");
   }
 
   public function newAction() {
