@@ -5,15 +5,20 @@ class NonceController {
   private $password;
   private $expiry;
 
-  public function __contruct($password,$expiry) {
+  public function __construct($password,$expiry) {
     $this->password = $password;
+    $this->expiry = $expiry;
+  }
+
+  private function passwordify($s) {
+    return "$s{$this->password}$s";
   }
 
   public function encode($time) {
-    return password_hash("$time{$this->password}$time");
+    return password_hash($this->passwordify($time),PASSWORD_DEFAULT);
   }
 
-  public function current_hash() {
+  public function currentHash() {
     $time = time();
     return array('time' => $time,
                  'hash' => $this->encode($time));
@@ -21,12 +26,7 @@ class NonceController {
 
   public function check($time,$nonce) {
     $elapsed_time = time() - $time;
-    if (($elapsed_time < $this->expiry)
-      && ($this->encode($time) === $nonce)) {
-      return TRUE;
-    }
-    else {
-      return FALSE;
-    }
+    return (($elapsed_time < $this->expiry)
+      && (password_verify($this->passwordify($time),$nonce)));
   }
 }

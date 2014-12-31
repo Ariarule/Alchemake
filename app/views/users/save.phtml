@@ -1,7 +1,7 @@
 <p><?php $this->flashSession->output() ?></p>
 
 <p>Enter a password and email address to save your game progress: </p>
-<form method="POST">
+<form method="POST" action="new">
   <label>Nickname:
     <input type="text" placeholder="Hello, my name is..." name="nickname"/>
   </label>
@@ -11,5 +11,12 @@
   <label>Password:
     <input type="password" name="password"/>
   </label>
+  <?php
+  $nonce = $this->nonce->currentHash();
+  ?>
+  <input type="hidden" name="time"
+    value="<?= $nonce['time'] ?>" />
+  <input type="hidden" name="hash"
+    value="<?= $nonce['hash'] ?>" />
   <input type="submit" value="Save!" />
 </form>

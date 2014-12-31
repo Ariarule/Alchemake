@@ -13,6 +13,8 @@ class Users extends Phalcon\Mvc\Model {
   protected $emailaddress;
   protected $networkcredential;
 
+
+
   /*
   public function change_nom ($userid,$newnom) {
     global $mysql_link;

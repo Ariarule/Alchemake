@@ -3,14 +3,26 @@
 class UsersController extends AlchemakeController {
 
   public function saveAction() {
-    $values['nickname'] = $this->request->getPost("nickname");
-    $values['emailaddress'] = $this->request->getPost("emailaddress");
-    $values['networkcredential'] = $this->security->hash($this->request->getPost("password"));
-    $this->flash->success("Test");
+
   }
 
   public function newAction() {
-
+    $values['nickname'] = $this->request->getPost("nickname");
+    $values['emailaddress'] = $this->request->getPost("emailaddress");
+    $values['networkcredential'] = $this->security->hash($this->request->getPost("password"));
+    if (FALSE && $this->nonce->check($this->request->getPost("time"),
+      $this->request->getPost("hash"))) {
+        //$user = new Users();
+        //$user->save($values);
+      }
+    else {
+      echo $this->request->getPost("time") . " ";
+      echo $this->request->getPost("hash") . " ";
+      echo $this->nonce->encode($this->request->getPost("time")) . " ";
+      echo (int)$this->nonce->check($this->request->getPost("time"),
+        $this->request->getPost("hash"));
+      echo "<br />Nope";
+    }
   }
 
   public function indexAction() {

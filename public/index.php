@@ -15,9 +15,7 @@ try {
   $loader = new \Phalcon\Loader();
   $loader->registerDirs(['../app/controllers/',
                          '../app/models/'])->register();
-  $di->setShared('nonce', function () {
-    return new NonceController($general_config->nonce->password);
-  });
+  $di->setShared('nonce', new NonceController($general_config->nonce->password,$general_config->nonce->timeout));
   $di->set('view',function () {
     $view = new View;
     $view->setViewsDir('../app/views/');
