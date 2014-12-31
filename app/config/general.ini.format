@@ -1,2 +1,6 @@
 [paths]
 img=http://img.alchemake.ariarule.com/
+
+[nonce]
+password=
+timeout=600
