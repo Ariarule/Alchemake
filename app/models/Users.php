@@ -1,5 +1,7 @@
 <?php
 
+use Phalcon\Mvc\Model\Validator\Email;
+
 class Users extends Phalcon\Mvc\Model {
 
   public $userid;
@@ -13,7 +15,20 @@ class Users extends Phalcon\Mvc\Model {
   protected $emailaddress;
   protected $networkcredential;
 
+  public function initialize() {
+    $this->skipAttributes(['userid',
+                           'emailaddress', //NULL allowed, optional
+                           'rank',
+                           'last_drop',
+                           'last_allowence',
+                           'main_order']);
+  }
 
+  public function validation() {
+    $this->validate(new Email(array('field'   => 'emailaddress',
+                                    'message' => 'Invalid email address.')));
+    return $this->validationHasFailed() !== TRUE;
+  }
 
   /*
   public function change_nom ($userid,$newnom) {

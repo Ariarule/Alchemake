@@ -10,18 +10,26 @@ class UsersController extends AlchemakeController {
     $values['nickname'] = $this->request->getPost("nickname");
     $values['emailaddress'] = $this->request->getPost("emailaddress");
     $values['networkcredential'] = $this->security->hash($this->request->getPost("password"));
-    if ($this->nonce->check($this->request->getPost("time"),
+    if (!$this->nonce->check($this->request->getPost("time"),
       $this->request->getPost("hash"))) {
-        $user = new Users();
-        $user->save($values);
+        echo "Nope.";
       }
-    else {
-      echo $this->request->getPost("time") . " ";
-      echo $this->request->getPost("hash") . " ";
-      echo $this->nonce->encode($this->request->getPost("time")) . " ";
-      echo (int)$this->nonce->check($this->request->getPost("time"),
-        $this->request->getPost("hash"));
-      echo "<br />Nope";
+    else { //Nonce is all right
+      $values['networkid'] = 'email'; //only email login by manual form
+      $user = new Users();
+      if ($user->save($values,
+        ['nickname','emailaddress','networkcredential','networkid'])
+        === FALSE) {
+
+        foreach ($user->getMessages() as $message) {
+          echo "$message<br />\n";
+        }
+
+        $this->dispatcher->forward(array("action"=>"save"));
+      }
+      else {
+        echo "Progress saved.";
+      }
     }
   }
 
