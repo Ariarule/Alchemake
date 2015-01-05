@@ -1,6 +1,7 @@
 <?php
 
-use Phalcon\Mvc\Model\Validator\Email;
+use Phalcon\Mvc\Model\Validator\Email,
+    Phalcon\Mvc\Model\Validator\PresenceOf;
 
 class Users extends Phalcon\Mvc\Model {
 
@@ -15,6 +16,27 @@ class Users extends Phalcon\Mvc\Model {
   protected $emailaddress;
   protected $networkcredential;
 
+  public function setNetworkcredential($plaintext) {
+    //FIXME: Not working for new signups
+    if (TRUE || preg_match('^.{8}',$plaintext) !== FALSE) {
+      $this->networkcredential = password_hash($plaintext);
+    }
+    else {
+      $this->networkcredential = ''; //caught by model validation below to show
+                                     //correct message
+    }
+  }
+
+  public function getNetworkcredential() {
+    if (isset($this->networkcredential)
+    &&  (len($this->networkcredential) > 0)) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
+
   public function initialize() {
     $this->skipAttributes(['userid',
                            'emailaddress', //NULL allowed, optional
@@ -26,7 +48,10 @@ class Users extends Phalcon\Mvc\Model {
 
   public function validation() {
     $this->validate(new Email(array('field'   => 'emailaddress',
-                                    'message' => 'Invalid email address.')));
+      'message' => 'Invalid email address.')));
+    //FIXME: networkcredential not working for new signups
+    $this->validate(new PresenseOf(array('field' => 'networkcredential',
+      'message' => 'A password or equivalent login credential is required.')));
     return $this->validationHasFailed() !== TRUE;
   }
 

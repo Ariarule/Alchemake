@@ -9,28 +9,22 @@ class UsersController extends AlchemakeController {
   public function newAction() {
     $values['nickname'] = $this->request->getPost("nickname");
     $values['emailaddress'] = $this->request->getPost("emailaddress");
-    $values['networkcredential'] = $this->security->hash($this->request->getPost("password"));
-    if (!$this->nonce->check($this->request->getPost("time"),
-      $this->request->getPost("hash"))) {
-        echo "Nope.";
-      }
-    else { //Nonce is all right
-      $values['networkid'] = 'email'; //only email login by manual form
-      $user = new Users();
-      if ($user->save($values,
-        ['nickname','emailaddress','networkcredential','networkid'])
-        === FALSE) {
+    $values['networkcredential'] = $this->request->getPost("password");
+    $values['networkid'] = 'email'; //only email login by manual form
+    $user = new Users();
 
+    if (!($this->nonce->check($this->request->getPost("time"),
+      $this->request->getPost("hash")) || $this->nonceError()) ||
+      ($user->save($values, //short-circuiting to skip save on nonceError
+      ['nickname','emailaddress','networkcredential','networkid']) === FALSE)) {
         foreach ($user->getMessages() as $message) {
-          echo "$message<br />\n";
+          $this->flashSession->notice("$message");
         }
-
         $this->dispatcher->forward(array("action"=>"save"));
       }
       else {
-        echo "Progress saved.";
+        //Shows success message by view.
       }
-    }
   }
 
   public function indexAction() {
