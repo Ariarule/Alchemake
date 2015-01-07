@@ -17,7 +17,7 @@ class Users extends Phalcon\Mvc\Model {
   protected $networkcredential;
 
   public function setNetworkcredential($plaintext) {
-    if (preg_match('/.{8}/',$plaintext) !== FALSE) {
+    if (strlen($plaintext) >= 8) {
       $this->networkcredential = password_hash($plaintext,PASSWORD_DEFAULT);
     }
      else {
