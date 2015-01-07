@@ -26,6 +26,10 @@ class Users extends Phalcon\Mvc\Model {
     }
   }
 
+  public function checkNetworkcredential($plaintext) {
+    return password_verify($plaintext,$this->networkcredential);
+  }
+
   public function getNetworkcredential() {
     trigger_error("get",E_USER_ERROR);
     if (isset($this->networkcredential)
