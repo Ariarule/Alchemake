@@ -2,8 +2,55 @@
 
 class UsersController extends AlchemakeController {
 
-  public function saveAction() {
+  private function userIsLoggedIn() {
+    return $this->session->has("userid");
+  }
 
+  private function userLookupBy($identifier,$field = 'email') {
+    return Users::findFirst("$field = '$identifier'");
+  }
+
+  public function loginAction() {
+    if($this->userIsLoggedIn()) {
+      $this->flashSession->notice("You are already logged in.");
+      $this->dispatcher->forward(array('action'=>'loginError'));
+    }
+  }
+
+  public function logoutAction() {
+    $this->session->destroy();
+  }
+
+  public function loginEmailAction() {
+    //Accepts from the login form information on logging in using email
+    //credentials
+
+    $email    = $this->request->getPost("email");
+    $password = $this->request->getPost("password");
+    $user = $this->userLookupBy($email);
+
+    if ($user->networkid !== 'email') {
+      //only allow manual logins for accounts which have an email credential
+      $this->dispatcher->forward(array('action'=>'loginError'));
+    }
+    elseif ($user->checkNetworkcredential($password)) {
+      $this->session->set('userid',$user->userid);
+      $this->dispatcher->forward(array('action'=>'completeLogin'));
+    }
+    else {
+      $this->dispatcher->forward(array('action'=>'loginError'));
+    }
+  }
+
+  public function completeLoginAction() {
+    }
+
+  public function loginErrorAction() {
+    //shows login error page
+  }
+
+  public function saveAction() {
+    //shows save form
   }
 
   public function newAction() {
