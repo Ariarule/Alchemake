@@ -88,44 +88,26 @@ class UsersController extends AlchemakeController {
         //supposed to be an integer between 0 and 100 inclusive
         //NOT a float between 0.0 and 1.0
 
-      $time_from_ay  = time() - @strtotime($user->last_allowence);
+      $time_from_ay    = time() - @strtotime($user->last_allowence);
+      $time_from_drop  = time() - @strtotime($user->last_drop);
         //suppress the warning from strtotime about the how the system timezone
         //cannot be trusted. PHP cannot know anyway
         //that the system isn't set up correctly for the string that we have.
         //possible improvement: get the timezone from the db? ini file?
 
       if (($time_from_ay > $delay) && (rand(0,100) < $probability)) {
-
+        $allowence = $user->giveAllowence();
+        if ($allowence) {
+          $this->flashSession->notice("You have been given $allowence AY.");
+        }
+        if ((rand(1,86400) < $time_from_drop) && ($time_from_drop > 120)) {
+          if ($user->giveItems) {
+            $this->flashSession->notice("New items! Check your inventory.");
+          }
+        }
       }
     }
   }
-
-  private function do_drops($time_from_ay,$time_from_drop) {
-    if ($time_from_ay > 604801) {
-      $allowence = get_allowence();
-      if(($allowence > 0) && (add_items($userid,1,$allowence))) {
-        echo "<div class='noticebox'>You have been given AY $allowence from the Alchemake Alchemy Guild. Thank you for Alchemaking.</div>";
-        $sql = "UPDATE `alchemake`.`users` SET `last_allowence` = NOW() WHERE `users`.`userid` = '$userid' LIMIT 1;";
-        $sql_r = mysql_query($sql,$mysql_link);
-        if (mysql_affected_rows($mysql_link) != 1) {
-    trigger_error("Couldn't update last_allowence correctly for $userid.",E_USER_NOTICE);
-    }
-        }
-      }
-    else {
-      $droproll = rand(1,86400);
-      if (($droproll < $time_from_drop) && ($time_from_drop > 120)) {
-        if (drop_items($userid)) {
-    echo "<div class='noticebox'>You have new items!</div>";
-    $sql = "UPDATE `alchemake`.`users` SET `last_drop` = NOW() WHERE `users`.`userid` = '$userid' LIMIT 1;";
-    $sql_r = mysql_query($sql,$mysql_link);
-    if (mysql_affected_rows($mysql_link) != 1) {
-      trigger_error("Couldn't update last_drop correctly.",E_USER_NOTICE);
-      }
-    }
-        }
-      }
-    }
 
   public function show_card($user_pic,$userinfo) {
     global $gen_time;

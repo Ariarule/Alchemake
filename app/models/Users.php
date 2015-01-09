@@ -59,8 +59,21 @@ class Users extends Phalcon\Mvc\Model {
     return $this->validationHasFailed() !== TRUE;
   }
 
-  public function allowence($value = 100) {
-    //TODO: Write me
+  private function giverUpdate($field) {
+    $field = 'NOW()';
+    $this->save();
+  }
+
+  public function giveItems() {
+    //TODO: Write giveItems
+    $this->giverUpdate($this->last_drop);
+    return TRUE; //TODO: Only return true if actually added items to inventory
+  }
+
+  public function giveAllowence($value = 100) {
+    //TODO: Write giveAllowence
+    $this->giverUpdate($this->last_allowence);
+    return $value;
   }
 
 /*
