@@ -43,6 +43,7 @@ class UsersController extends AlchemakeController {
   }
 
   public function completeLoginAction() {
+    $this->doDrops();
     }
 
   public function loginErrorAction() {
@@ -76,6 +77,27 @@ class UsersController extends AlchemakeController {
 
   public function indexAction() {
     //TODO: "Your account" screen
+  }
+
+  private function doDrops() {
+    if ($this->userIsLoggedIn()) {
+      $user = $this->userLookupBy($this->session->get('userid'),'userid');
+      $delay        = $this->general_config->game->min_time_ay;
+      $allowence    = $this->general_config->game->min_time_ay;
+      $probability  = $this->general_config->game->ay_probability;
+        //supposed to be an integer between 0 and 100 inclusive
+        //NOT a float between 0.0 and 1.0
+
+      $time_from_ay  = time() - @strtotime($user->last_allowence);
+        //suppress the warning from strtotime about the how the system timezone
+        //cannot be trusted. PHP cannot know anyway
+        //that the system isn't set up correctly for the string that we have.
+        //possible improvement: get the timezone from the db? ini file?
+
+      if (($time_from_ay > $delay) && (rand(0,100) < $probability)) {
+
+      }
+    }
   }
 
   private function do_drops($time_from_ay,$time_from_drop) {

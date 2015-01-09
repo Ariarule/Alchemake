@@ -4,3 +4,7 @@ img=http://img.alchemake.ariarule.com/
 [nonce]
 password=
 timeout=600
+
+[game]
+min_time_ay = 300
+ay_probability = 50
