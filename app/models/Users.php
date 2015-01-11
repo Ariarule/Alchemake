@@ -43,7 +43,7 @@ class Users extends Phalcon\Mvc\Model {
 
   public function initialize() {
     $this->skipAttributes(['userid',
-                           'emailaddress', //NULL allowed, optional
+                           'emailaddress',
                            'rank',
                            'last_drop',
                            'last_allowence',

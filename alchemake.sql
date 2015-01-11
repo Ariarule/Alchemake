@@ -100,8 +100,8 @@ CREATE TABLE IF NOT EXISTS `trades` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userid` varchar(255) NOT NULL,
-  `networkid` enum('email','cookie-only') NOT NULL,
-  `emailaddress` varchar(255) NULL,
+  `networkid` enum('email') NOT NULL,
+  `emailaddress` varchar(255) NOT NULL,
   `networkcredential` varchar(255) NOT NULL,
   `nickname` varchar(60) NOT NULL,
   `rank` tinyint(3) unsigned NOT NULL,
