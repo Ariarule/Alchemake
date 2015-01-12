@@ -2,37 +2,10 @@
 
 class InventoryController extends AlchemakeController {
 
-  function show_inventory($inventory_table) {
-    global $gen_nonce;
-    global $gen_time;
+  public function indexAction($userid) {
+    //displays the player's inventory
+    $userid_is_logged_in = $this->useridIsLoggedIn($userid);
 
-    echo "<form method=\"POST\" action=\"action.php?time=$gen_time&nonce=$gen_nonce\">\n";
-    ?>
-    <table>
-    <tr><td>Item Name</td><td>&nbsp;</td><td>Description</td><td>Quantity</td><td>Quantity Available</td><td>Use?</td></tr>
-    <?php
-    foreach ($inventory_table as $inventory_row) {
-      if (is_item_basic($inventory_row['itemid'])) {
-        $storetext = "<a href=\"alchemart.php?time=$gen_time&nonce=$gen_nonce\" title=\"50 AY\">&ndash;&curren;&ndash;</a>";
-        }
-      else {
-        $storetext = '';
-        }
-
-      $shadetext = linebg();
-      $imgtext = "";
-      if ($inventory_row['image'] != "") {
-        $imgtext = "<img src=\"http://alchemake.com/itempics/01029260/{$inventory_row['image']}\" />";
-        }
-
-      //$inventory_row['available'] = $inventory_row['qty'] - (int)$inventory_row['sum_proposer_qty'];
-      echo "<tr id=\"row{$inventory_row['itemid']}\" $shadetext><td>{$inventory_row['name']}{$storetext}</td><td>$imgtext</td><td>{$inventory_row['description']}</td><td>{$inventory_row['qty']}</td><td>{$inventory_row['available']}</td><td>" . make_checkbox($inventory_row['itemid'],$inventory_row['available']) . "</td></tr>";
-      }
-    ?>
-    </table>
-    <div class="buttonholder"><input class="alchemakebutton" type="submit" name="alchemake" value="Alchemake" title="Alchemake The Checked Items!"/><input class="alchemakebutton" type="submit" name="alchemake" value="Trade" title="Trade Items"/></div>
-    </form>
-    <?php
   }
 
   protected function inventory_drop($userid) {

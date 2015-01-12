@@ -2,20 +2,6 @@
 
 class Item extends Phalcon\Mvc\Model {
 
-  public function transfer($from,$to,$itemid,$qty) {
-    global $mysql_link;
-    //to
-    $sql_r = add_items($to,$itemid,$qty);
-    if (!$sql_r) {
-      trigger_error("Query failed in item_transfer <!-- $qty x $itemid TO $to -->",E_USER_NOTICE);
-      }
-    //from
-    $sql_r = rm_item($from,$itemid,$qty);
-    if (!$sql_r) {
-      trigger_error("Query failed in item_transfer <!-- $qty x $itemid FROM $from -->",E_USER_NOTICE);
-      }
-  }
-
   function item_names(&$items) {
     global $mysql_link;
     //UGLY HACK: Loads all item names into memory for trade tables. Should really be done in MySQL with multiple joins

@@ -2,14 +2,6 @@
 
 class UsersController extends AlchemakeController {
 
-  private function userIsLoggedIn() {
-    return $this->session->has("userid");
-  }
-
-  private function userLookupBy($identifier,$field = 'emailaddress') {
-    return Users::findFirst("$field = '$identifier'");
-  }
-
   public function loginAction() {
     if($this->userIsLoggedIn()) {
       $this->flashSession->notice("You are already logged in.");
