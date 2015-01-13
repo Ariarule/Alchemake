@@ -16,6 +16,12 @@ class Users extends Phalcon\Mvc\Model {
 
   protected $networkcredential;
 
+  public function initialize() {
+    $this->hasMany('userid','Inventory','userid');
+    $this->hasMany('userid','Trades','proposer_userid');
+    $this->hasMany('userid','Trades','proposed_userid');
+    }
+
   public function setNetworkcredential($plaintext) {
     if (strlen($plaintext) >= 8) {
       $this->networkcredential = password_hash($plaintext,PASSWORD_DEFAULT);

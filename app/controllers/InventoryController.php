@@ -8,19 +8,6 @@ class InventoryController extends AlchemakeController {
 
   }
 
-  protected function inventory_drop($userid) {
-    $number_of_items = rand(2,4);
-    $success_on_all = TRUE;
-    for ($i = 0; $i < $number_of_items; $i++) {
-      $itemno = rand(16,25); //should be selected out of an array of basic items
-      $qty = rand(1,3);
-      if(!add_items($userid,$itemno,$qty)) {
-        $success_on_all = FALSE;
-        }
-      }
-    return $success_on_all;
-  }
-
   protected function rm_inventory_item($from,$itemid,$qty) {
     global $mysql_link;
     $sql = "UPDATE `alchemake`.`inventory` SET `qty` = `qty` - $qty WHERE `inventory`.`userid` = '$from' AND `inventory`.`itemid` = $itemid LIMIT 1;";

@@ -70,10 +70,10 @@ CREATE TABLE IF NOT EXISTS `items` (
 
 CREATE TABLE IF NOT EXISTS `tradedetails` (
   `tradeid` bigint(20) NOT NULL,
-  `proposer_itemid` int(10) unsigned NOT NULL,
-  `proposer_qty` int(10) unsigned NOT NULL,
-  `proposed_itemid` int(10) unsigned NOT NULL,
-  `proposed_qty` int(10) unsigned NOT NULL,
+  `direction` enum('TO_PROPOSER','FROM_PROPOSER') NOT NULL,
+  `party` enum('PROPOSER','PROPOSED') NOT NULL,
+  `itemid` int(10) unsigned NOT NULL,
+  `qty` int(10) unsigned NOT NULL,
   KEY `tradeid` (`tradeid`)
 );
 

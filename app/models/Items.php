@@ -1,6 +1,23 @@
 <?php
 
-class Item extends Phalcon\Mvc\Model {
+class Items extends Phalcon\Mvc\Model {
+
+  public $itemid;
+  public $name;
+  public $basic;
+  public $description;
+  public $image;
+
+  public function initialize() {
+    $this->belongsTo('itemid','Inventory','itemid');
+    foreach ($i in [1,2,3]) {
+      //this really needs fixing of the normalization in the schema instead
+      $this->belongsTo('itemid','Combinations',"ingredient{$i}_itemid");
+    }
+    $this->belongsTo('itemid','Combinations','preq_tool_itemid');
+    $this->belongsTo('itemid','Combinations','itemid');
+    $this->belongsTo('itemid','TradeDetails','itemid');
+  }
 
   function item_names(&$items) {
     global $mysql_link;
