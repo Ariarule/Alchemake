@@ -1,0 +1,40 @@
+<?php $this->flashSession->output();
+
+echo "<h2>Welcome {$userinfo->nickname}</h2>";
+$possible_f = array(
+  'T' => function () use ($userinfo) { //trades
+    echo "<h3>Trades</h3>";
+    //print_r($userinfo->trades); //TODO: Write T function
+  },
+
+  'I' => function () use ($userinfo) { //inventory
+    echo "<h3>Your Inventory</h3>";
+    //print_r($userinfo->inventory); //TODO: Write T function
+  },
+
+  'U' => function () use ($userinfo) { //usercard
+    ?><!--
+    <?php echo "{$userinfo->userid}"; ?>
+    -->
+    <h3>Usercard</h3>
+    <div id="userinfo">
+      <ul>
+        <li>Last item drop: <?= explode($userinfo->userid,' ')[0] ?></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+    <?php
+  });
+
+foreach (str_split($userinfo->main_order,1) as $section) {
+  if (isset($possible_f[$section])) {
+    $possible_f[$section]();
+  }
+}
+
+echo "<pre>";
+print_r($userinfo);
+echo "</pre>";
+
+?>

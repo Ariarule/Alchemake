@@ -68,7 +68,15 @@ class UsersController extends AlchemakeController {
   }
 
   public function indexAction() {
-    //TODO: "Your account" screen
+    $logged_in = $this->userIsLoggedIn();
+    if ($logged_in) {
+      $this->view->setVar('userinfo',
+        $this->userLookupBy($this->session->get("userid"),'userid'));
+    }
+    else {
+      $this->flashSession->notice("You are not currently logged in");
+      $this->dispatcher->forward(array("action"=>"save"));
+    }
   }
 
   private function doDrops() {
