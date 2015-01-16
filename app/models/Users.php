@@ -17,6 +17,12 @@ class Users extends Phalcon\Mvc\Model {
   protected $networkcredential;
 
   public function initialize() {
+    $this->skipAttributes(['userid',
+                           'emailaddress',
+                           'rank',
+                           'last_drop',
+                           'last_allowence',
+                           'main_order']);
     $this->hasMany('userid','Inventory','userid');
     $this->hasMany('userid','Trades','proposer_userid');
     $this->hasMany('userid','Trades','proposed_userid');
@@ -45,15 +51,6 @@ class Users extends Phalcon\Mvc\Model {
     else {
       return FALSE;
     }
-  }
-
-  public function initialize() {
-    $this->skipAttributes(['userid',
-                           'emailaddress',
-                           'rank',
-                           'last_drop',
-                           'last_allowence',
-                           'main_order']);
   }
 
   public function validation() {
