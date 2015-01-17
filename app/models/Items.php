@@ -10,7 +10,7 @@ class Items extends Phalcon\Mvc\Model {
 
   public function initialize() {
     $this->belongsTo('itemid','Inventory','itemid');
-    foreach ($i in [1,2,3]) {
+    foreach ([1,2,3] as $i) {
       //this really needs fixing of the normalization in the schema instead
       $this->belongsTo('itemid','Combinations',"ingredient{$i}_itemid");
     }
