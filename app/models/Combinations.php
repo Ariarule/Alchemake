@@ -8,7 +8,7 @@ class Combinations extends Phalcon\Mvc\Model {
   public $this->preq_tool_itemid;
 
   public function initialize() {
-    foreach ($i in [1,2,3]) {
+    foreach ([1,2,3] as $i) {
       $this->hasMany("ingredient{$i}_itemid",'Items','itemid');
     }
     $this->hasOne('preq_tool_itemid','Items','itemid');

@@ -9,7 +9,31 @@ $possible_f = array(
 
   'I' => function () use ($userinfo) { //inventory
     echo "<h3>Your Inventory</h3>";
-    //print_r($userinfo->inventory); //TODO: Write T function
+    if ($userinfo->inventory->count() > 0) {
+      echo "<form method='POST'><table>";
+      echo "<thead><tr>
+        <th>Qty</th>
+        <th>Description<th>
+        <th>Action Qty <button type='reset'>Zero</button></th></tr></thead><tbody>";
+      foreach ($userinfo->inventory as $inventory_line) {
+        echo "<tr>"
+          . "<td>{$inventory_line->qty}</td>"
+          . "<td>{$inventory_line->items->name}"
+          . " &ndash; "
+          . "{$inventory_line->items->description}</td>"
+          . '<td><input type="number" step="1" min="0" value="0"'
+          .  "name='{$inventory_line->items->itemid}'"
+          .  " max='{$inventory_line->qty}'/></td>"
+          . "</tr>";
+      }
+      echo "</tbody></table>";
+      echo '<button formaction="Trades\new" type="submit">Trade</button>&nbsp;'
+         . '<button formaction="Inventory\alchemake" type="submit">Alchemake'
+         .'</button></form>';
+    }
+    else {
+      echo "You have no inventory right now. :(";
+    }
   },
 
   'U' => function () use ($userinfo) { //usercard
@@ -19,9 +43,9 @@ $possible_f = array(
     <h3>Usercard</h3>
     <div id="userinfo">
       <ul>
-        <li>Last item drop: <?= explode($userinfo->userid,' ')[0] ?></li>
-        <li></li>
-        <li></li>
+        <li>Basic item delivery: <?= explode($userinfo->last_drop,' ')[0] ?></li>
+        <li>AY Allowence: <?= explode($userinfo->last_allowence,' ')[0] ?></li>
+        <li>Email Address: <?= $userinfo->emailaddress ?></li>
       </ul>
     </div>
     <?php
