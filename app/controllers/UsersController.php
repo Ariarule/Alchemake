@@ -75,7 +75,7 @@ class UsersController extends AlchemakeController {
     }
     else {
       $this->flashSession->notice("You are not currently logged in");
-      $this->dispatcher->forward(array("action"=>"save"));
+      $this->dispatcher->forward(array("action"=>"login"));
     }
   }
 
