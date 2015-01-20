@@ -7,7 +7,8 @@ class Inventory extends Phalcon\Mvc\Model {
   public $qty;
 
   public function initialize() {
-    $this->hasManyToMany('userid','Users','userid','itemid','Items','itemid');
+    $this->belongsTo('userid','Users','userid');
+    $this->hasOne('itemid','Items','itemid');
   }
 
   public function transfer($from,$to,$itemid,$qty) {

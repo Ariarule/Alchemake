@@ -2,6 +2,8 @@
 
 class InventoryController extends AlchemakeController {
 
+}
+/*
   public function indexAction($userid) {
     //displays the player's inventory
     $userid_is_logged_in = $this->useridIsLoggedIn($userid);
@@ -151,3 +153,4 @@ class InventoryController extends AlchemakeController {
     </div>
   }
 }
+*/
