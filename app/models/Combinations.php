@@ -14,4 +14,5 @@ class Combinations extends Phalcon\Mvc\Model {
     $this->hasOne('preq_tool_itemid','Items','itemid');
     $this->hasOne('itemid','Items','itemid');
   }
+
 }

@@ -2,7 +2,6 @@
 
 class AlchemakeController extends \Phalcon\Mvc\Controller {
 
-
   protected function userIsLoggedIn() {
     return $this->session->has("userid");
   }
@@ -13,6 +12,15 @@ class AlchemakeController extends \Phalcon\Mvc\Controller {
 
   protected function useridIsLoggedIn($userid) {
     return $this->session->get('userid') === $userid;
+  }
+
+  protected function userThatIsLoggedIn() {
+    if ($this->userIsLoggedIn()) {
+      return userLookupBy($this->session->get('userid'),$field = 'userid');
+    }
+    else {
+      return FALSE;
+    }
   }
 
   public function nonceError($text = "") {

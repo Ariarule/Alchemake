@@ -1,28 +1,7 @@
-//TODO: Completely rewrite, this is Copy and Paste from old system
-
-echo "<form method=\"POST\" action=\"action.php?time=$gen_time&nonce=$gen_nonce\">\n";
-?>
-<table>
-<tr><td>Item Name</td><td>&nbsp;</td><td>Description</td><td>Quantity</td><td>Quantity Available</td><td>Use?</td></tr>
-<?php
-foreach ($inventory_table as $inventory_row) {
-  if (is_item_basic($inventory_row['itemid'])) {
-    $storetext = "<a href=\"alchemart.php?time=$gen_time&nonce=$gen_nonce\" title=\"50 AY\">&ndash;&curren;&ndash;</a>";
-    }
-  else {
-    $storetext = '';
-    }
-
-  $shadetext = linebg();
-  $imgtext = "";
-  if ($inventory_row['image'] != "") {
-    $imgtext = "<img src=\"http://alchemake.com/itempics/01029260/{$inventory_row['image']}\" />";
-    }
-
-  //$inventory_row['available'] = $inventory_row['qty'] - (int)$inventory_row['sum_proposer_qty'];
-  echo "<tr id=\"row{$inventory_row['itemid']}\" $shadetext><td>{$inventory_row['name']}{$storetext}</td><td>$imgtext</td><td>{$inventory_row['description']}</td><td>{$inventory_row['qty']}</td><td>{$inventory_row['available']}</td><td>" . make_checkbox($inventory_row['itemid'],$inventory_row['available']) . "</td></tr>";
-  }
-?>
-</table>
-<div class="buttonholder"><input class="alchemakebutton" type="submit" name="alchemake" value="Alchemake" title="Alchemake The Checked Items!"/><input class="alchemakebutton" type="submit" name="alchemake" value="Trade" title="Trade Items"/></div>
-</form>
+<h1>How to Alchemake</h1>
+<ul>
+  <li>Select two or three items in your inventory. Each time you select an item, possible combinations will be highlighted as a hint after just a moment, so don't worry if you don't know them all, or if there's a new one you don't know about yet.</li>
+  <li>Click the Alchemake button to confirm your choice. An item will be created from the ones you selected, and placed in your inventory!</li>
+  <li>What happens if you select two or three items that don't Alchemake into anything? Try it and see!</li>
+  <li>This help message appears when you select less than 2 or more than three items.</li>
+</ul>

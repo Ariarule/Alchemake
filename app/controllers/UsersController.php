@@ -5,7 +5,7 @@ class UsersController extends AlchemakeController {
   public function loginAction() {
     if($this->userIsLoggedIn()) {
       $this->flashSession->notice("You are already logged in.");
-      $this->dispatcher->forward(array('action'=>'loginError'));
+      $this->dispatcher->forward(array('action'=>'index'));
     }
   }
 

@@ -22,7 +22,7 @@ $possible_f = array(
           . " &ndash; "
           . "{$inventory_line->items->description}</td>"
           . '<td><input type="number" step="1" min="0" value="0"'
-          .  "name='{$inventory_line->items->itemid}'"
+          .  "name='items[{$inventory_line->items->itemid}]'"
           .  " max='{$inventory_line->qty}'/></td>"
           . "</tr>";
       }
