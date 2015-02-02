@@ -16,7 +16,7 @@ class AlchemakeController extends \Phalcon\Mvc\Controller {
 
   protected function userThatIsLoggedIn() {
     if ($this->userIsLoggedIn()) {
-      return userLookupBy($this->session->get('userid'),$field = 'userid');
+      return $this->userLookupBy($this->session->get('userid'),$field = 'userid');
     }
     else {
       return FALSE;

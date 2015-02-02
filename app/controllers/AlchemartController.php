@@ -1,50 +1,63 @@
 <?php
-
 class AlchemartController extends AlchemakeController {
 
-}
-
-/*$ay_table =  get_inventory_table($userid,1);
-
-?>
-<link href="<?php echo $base_url;?>alchemake.css?v=<?php echo $version;?>" rel="stylesheet" type="text/css"/>
-
-<div id ="page">
-<img src="<?php echo $base_url;?>alchemart.png?v=<?php echo $version;?>" alt="Welcome to Alchemart" />
-<div id="martinfo">All items AY 50 except as marked.
-<?php
-
-if (isset($_POST['itemno'])) {
-  $_POST['itemno'] = (int)$_POST['itemno'];
-  $_POST['qty'] = (int)$_POST['qty'];
-  if (is_item_basic($_POST['itemno'])) {
-    $cost = $_POST['qty'] * 50;
-    if ($cost > $ay_table[1]['available']) {
-      echo "You don't currently have enough AY. (Cost: AY $cost)";
-      }
+  public function buyAction() {
+    if ($this->userThatIsLoggedIn() !== FALSE) {
+      $user = $this->userThatIsLoggedIn();
+    }
     else {
-      $success = add_items($userid,$_POST['itemno'],$_POST['qty']);
-      if ($success) {
-  echo "<div class=\"noticebox\">Success! You got {$_POST['qty']}x {$items[$_POST['itemno']]['name']}</div>";
-  $cost_sql = "UPDATE `inventory` SET `qty` = `qty` - $cost WHERE `userid` = '$userid' AND `itemid` = 1 LIMIT 1";
-  $cost_r = mysql_query($cost_sql,$mysql_link);
-  }
+      $this->dispatcher->forward(array('controller'=>'Users','action'=>'login'));
+    }
+
+    $start_buy_power = $user->getInventory('itemid = 1')[0]->qty;
+
+    $order = [];
+    foreach ($this->request->getPost('order') as $itemid => $itemqty) {
+      $itemid = (int)$itemid;
+      $itemqty = (int)$itemqty;
+      if ($itemid !== 1) { //you can't buy or sell money at a ratio not 1:1
+        $order[$itemid]['qty'] = $itemqty;
+        if ($itemqty >= 0) {
+          $order[$itemid]['price'] = 50;
+        }
+        else { //sell to the store
+          $order[$itemid]['price'] = 40;
+        }
       }
     }
+
+    $total = 0;
+    foreach ($order as $itemid => $instructions) {
+      $total += $instructions['qty'] * $instructions['price'];
+    }
+
+    $new_buying_power = $buying_power - $total;
+
+    if ($new_buying_power < 0) {
+      $this->flashSession->notice("You do not have sufficent AY for this"
+        . "transaction.");
+      $this->dispatcher->forward(array('action'=>'index'));
+    }
+    else {
+      $order[1] = array('qty' => $new_buying_power);
+      $resultset_query = ["itemid = 1"]; //special value for money
+      foreach ($order as $itemid => $instructions) {
+        $resultset_query[] = "itemid = $itemid";
+      }
+      $resultset_query = implode(' or ',$resultset_query);
+      $inventory_to_update = $user->getInventory($resultset_query);
+
+      Foreach ($inventory_to_update as $line_to_update) {
+        $line_to_update->qty = $order[$line_to_update->itemid]['qty'];
+        $line_to_update->save();
+      }
+      $this->flashSession->notice("Success! Your inventory has been updated.";)
+      $this->flashSession->notice("You currently have AY $new_buying_power")
+    }
   }
-$ay_table =  get_inventory_table($userid,1); //needs reloading for next line
-echo "You currently have AY {$ay_table[1]['available']} available.</div>";
-?>
 
-<?php for ($i = 16;$i < 26;$i++) { ?>
-<form method="POST">
-<input type="hidden" name="itemno" value="<?php echo $i;?>" />
-<div class="buttonholder" style="clear: both; border-bottom: 1px black dotted;"><?php echo $items[$i]['name'];?></div>
-<div><input class="alchemakebutton" type="submit" name="qty" value="1 <?php echo $items[$i]['name'];?>" />
-<input class="alchemakebutton" type="submit" name="qty" value="2 <?php echo $items[$i]['name'];?>" />
-<input class="alchemakebutton" type="submit" name="qty" value="5 <?php echo $items[$i]['name'];?>" /></div>
-</form>
-<?php } ?>
+  public function indexAction() {
 
-<div style="clear: both;"><?php return_button();?></div>
-</div> */
+  }
+
+}
