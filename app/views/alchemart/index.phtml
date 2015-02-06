@@ -1,0 +1,17 @@
+<?php $this->flashSession->output() ?>
+
+<form method="POST" action="/alchemart/buy">
+  <table>
+    <thead><tr><td>Item</td><td>Price</td><td>Qty</td></tr></head>
+    <?php
+    $basic_items = Items::find('itemid > 1 AND basic = 1');
+    foreach ($basic_items as $item) {
+      echo "<tr><td>{$item->name}</td><td>50</td><td>"
+      . '</td><td><input type="number" step="1" min="-10" max value="0"'
+      .  "name='order[{$item->itemid}]'"
+      .  " max='50'/></td></tr>";
+    }
+  ?>
+  </table>
+  <input type="submit" value="Buy" />
+</form>
