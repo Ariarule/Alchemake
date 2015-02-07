@@ -95,41 +95,25 @@ public function proposeAction() {
     $this->saveTradeDetails($trade->tradeid, $proposer_items_info,'FROM_PROPOSER');
 }
 
-public function rejectAction() {
-  //TODO: Rewrite
-  if ($user_role & PROPOSED) {
-    $sql = "UPDATE `alchemake`.`trades` SET `status` = 'rejected' WHERE `trades`.`tradeid` ={$_GET['tradeid']} LIMIT 1 ;";
-    $sql_r = mysql_query($sql,$mysql_link);
-    if ($sql_r) {
-      echo "Your request to reject the trade has been received.";
-      }
-    else {
-      trigger_error("$general_oops -- Your request wasn't understood. If you get this message repeatedly, please let us know.",E_USER_ERROR);
-      }
-    }
-  else {
-    trigger_error("Only the person that has received this offer can reject it.",E_USER_ERROR);
-    }
+private function delTrade($id_to_check,$new_status) {
+  $tradeid = (int)$this->getPost('tradeid');
+  $trade = Trades::findFirst('tradeid');
+  $trade_info = (array)$trade;
+  if ($trade_info[$id_to_check] == $this->userThatIsLoggedIn()->userid
+          && ($trade->status == 'pending')) {
+            $trade->status = $new_status;
+          }
+  return $trade->save();
   }
 
+public function rejectAction() {
+    return $this->delTrade('proposed_userid','rejected');
+}
+
 public function withdrawAction() {
-  //TODO: Rewrite
-  if ($user_role & PROPOSER) {
-    $sql = "UPDATE `alchemake`.`trades` SET `status` = 'withdrawn' WHERE `trades`.`tradeid` ={$_GET['tradeid']} LIMIT 1 ;";
-    $sql_r = mysql_query($sql,$mysql_link);
-    if ($sql_r) {
-      echo "Your request to withdraw the trade has been received, and will be processed within 5 minutes.";
-      }
-    else {
-      trigger_error("$general_oops -- Your request wasn't understood. If you get this message repeatedly, please let us know.",E_USER_ERROR);
-      }
-    }
-  else {
-    trigger_error("Only the person that made this offer can reject it.",E_USER_ERROR);
-    }
-  }
-  
-  
+    return $this->delTrade('proposer_userid','withdrawn')
+}
+    
 public function acceptAction() {
   //TODO: Rewrite
   if ($user_role & PROPOSED) {
