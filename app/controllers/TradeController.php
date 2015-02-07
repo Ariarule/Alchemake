@@ -2,26 +2,12 @@
 class TradeController extends AlchemakeController {
 
 private function is_logged_in_user_proposer($proposer) {
-  global $userid;
-  if ($proposer == $userid) {
+  if ($proposer === $this->userThatIsLoggedIn()->userid) {
     return true;
     }
   return false;
   }
-
-private function clean_trade_element(&$element,$key) {
-  if ($key == 'userid')	{
-    $element = mysql_real_escape_string($element);
-    }
-  elseif (is_array($element)) {
-    //Should never happen, included as sanity check
-    return TRUE;
-    }
-  else {
-    $element = (int)$element;
-    }
-  }
-
+  
 private function clean_trade($unclean_trade) {
   array_walk_recursive($unclean_trade,'clean_trade_element');
 
@@ -38,115 +24,144 @@ private function clean_trade($unclean_trade) {
   return $unclean_trade; //the trade is now clean
   }
 
-private function userrole() {
-  define('PROPOSED',1);
-  define('PROPOSER',2);
-  $user_role = 0;
-  if ($userid == $trade['proposer_userid']) {
-    $user_role = ($user_role | PROPOSER);
-    }
-  if ($userid == $trade['proposed_userid']) {
-    $user_role = ($user_role | PROPOSED);
-    }
-  if ($user_role == 0) {
-    trigger_error("You are not a party to this trade. It was proposed by {$trade['proposer_userid']} to {$trade['proposed_userid']} (your id # is $userid)",E_USER_ERROR);
-    }
-}
+ private function cleanItems($dirty_items) {
+     $clean = [];
+     foreach ($dirty_items as $item_id => $qty) {
+         $clean[(int)$item_id] = (int)$qty;
+     }
+     return $clean;
+ }
 
-public function propose() {
-  //TODO: Rewrite
-  //Create Trade Script
-  //Receives an array of the form
-  /*
-  $_POST['trade'] = array(
-    'proposer' = array(
-      userid = '...',
-      items = array(
-        $itemno => qty,
-        $itemno => qty,
-        )
-      )
-     'proposed' = array(
-      userid = '...',
-      items = array(
-        $itemno => qty,
-        $itemno => qty,
-        )
-      )
-      )
-  */
-  //require_once('alchemake-inc.php');
-  //context_setup();
-  //THIS FILE IS INVOKED FROM setuptrade.php
-
-
-
-  //NB: $trade = $_POST['trade'] in setuptrade.php
-  $trade = clean_trade($trade);
-
-  $inventory_table = get_inventory_table($userid);
-  $reformatted_inventory = array();
-  foreach ($inventory_table as $inventory_item) {
-    $reformatted_inventory[$inventory_item['itemid']] = array ('name' => $inventory_item['name'],
-        'description' => $inventory_item['description'],
-        'available' => $inventory_item['available']);
-    }
-  unset($inventory_table); //Not needed anymore, probably rather large
-
-  $trade_error = FALSE;
-  foreach($trade['proposer']['items'] as $itemid => $proposer_table_qty) {
-    if (!isset($reformatted_inventory[$itemid]['available'])) {
-      $reformatted_inventory[$itemid] = array();
-      $reformatted_inventory[$itemid]['available'] = 0;
-      }
-    if ($proposer_table_qty > $reformatted_inventory[$itemid]['available']) {
-      $trade_error = TRUE;
-      echo "You have suggested trading {$proposer_table_qty}x {$reformatted_inventory[$itemid]['name']} but you have only {$reformatted_inventory[$itemid]['available']} available. <br />";
-      }
-    }
-  if ($trade_error) {
-    trigger_error("Cannot suggest this trade -- it's not possible to trade a larger quantity of something than you currently have available.",E_USER_ERROR);
-    }
-
-  $sql = "INSERT INTO `trades` (`proposer_userid`,`proposed_userid`,`status`) VALUES ('{$trade['proposer']['userid']}','{$trade['proposed']['userid']}','pending');";
-  $insert_link = mysql_query($sql,$mysql_link);
-  if ($insert_link) {
-    $tradeid = mysql_insert_id($mysql_link);
-    }
-  else {
-    trigger_error($general_oops,E_USER_ERROR);
-    //echo $sql . " gave " . mysql_error() . "\n";
-    }
-
-  $trade_detail_rows = max(sizeof($trade['proposer']['items']),sizeof($trade['proposed']['items']));
-  $proposer_item_keys = array_keys($trade['proposer']['items']);
-  $proposed_item_keys = array_keys($trade['proposed']['items']);
-
-
-  for ($i = 0; $i < $trade_detail_rows; $i++) {
-    if (isset($proposer_item_keys[$i])) {
-      $proposer_item_qty = $trade['proposer']['items'][$proposer_item_keys[$i]];
-      $proposer_item = $proposer_item_keys[$i];
-      }
-    else {
-      $proposer_item_qty = '0';
-      $proposer_item = '0';
-      }
-    if (isset($proposed_item_keys[$i])) {
-      $proposed_item_qty = $trade['proposed']['items'][$proposed_item_keys[$i]];
-      $proposed_item = $proposed_item_keys[$i];
-      }
-    else {
-      $proposed_item_qty = '0';
-      $proposed_item = '0';
-      }
-    //FUTURE: COMBINE INTO SINGLE QUERY!
-    $sql = "INSERT INTO `alchemake`.`tradedetails` (`tradeid`, `proposer_itemid`, `proposer_qty`, `proposed_itemid`, `proposed_qty`) VALUES ('$tradeid', '$proposer_item', '$proposer_item_qty', '$proposed_item', '$proposed_item_qty');";
-    $insert_link = mysql_query($sql,$mysql_link);
+private function proposedQtys($user) {
+    $items = [];
+    $proposed_trades = $user->getTrades("proposer_userid = {$user->userid}"
+        . "and status='pending'");
+    foreach ($proposed_trades as $trade) {
+        foreach ($trade->trade_details as $trade_detail) {
+            $items[$trade_detail->itemid] = $trade_detail->qty;
+        }
     }
 }
 
-public function reject() {
+private function compareProposedInventory($user) {
+    $net = [];
+    $proposed_qtys = $this->proposedQtys($user);
+    foreach ($proposed_qtys as $itemid => $proposed_qty) {
+        $inventory_line = $user->getInventory("itemid = $itemid");
+        $inv_qty = 0;
+        if ($inventory_line && isset($inventory_line[0])) {
+            $inv_qty += $inventory_line[0]->qty;
+        }
+        $net[$itemid] = $inv_qty - $proposed_qty;
+    }
+    return $net;
+}
+
+private function userQtyShorts($user,$proposals) {
+    $problems = [];
+    $availabilities = $this->compareProposedInventory($user);
+    foreach ($proposals as $itemid => $proposed_qty) {
+        if ($availabilities[$itemid] > $proposed_qty) {
+            $problems[$items] = 
+                    array('proposed' => $proposed_qty
+                        , 'available' => $availabilities[$itemid]);
+        }
+    }
+    return $problems;
+}
+
+public function proposeAction() {
+    $posted_trade = $this->request->getPost();
+    $trade = new Trades();
+    $trade->proposer_userid = $this->userThatIsLoggedIn()->userid;
+    $posted_trade['proposed'] = (int)$posted_trade['proposed'];
+    
+    $proposed_user = $this->userLookupBy($posted_trade['proposed'], 'userid');
+    if (!$proposed_user) {
+        $this->flashSession->error("I couldn't find the player you were"
+            ." suggesting this trade to");
+        return FALSE;
+    }
+    $trade->proposed_userid = $posted_trade['proposed'];
+        //valid userid, just used to lookup user
+    $proposer_user = $this->userThatIsLoggedIn();
+    
+    $proposed_items_info = $this->cleanItems($posted_trade['proposed_items']);
+    $proposer_items_info = $this->cleanItems($posted_trade['proposer_items']);
+
+    $trade->status =  'pending';
+    $shorts = $this->userQtyShorts($proposer_user,$proposer_items_info);
+    if (count($shorts) > 0) {
+        $this->flashSession->error("You don't have enough of an item to suggest"
+                ." this trade.");
+        $this->dispatcher->forward(array('controller'=>'Users',
+            'action'=>'index'));
+    }
+    
+}
+    
+    
+
+    
+}  
+
+
+
+
+//  $trade_error = FALSE;
+//  foreach($trade['proposer']['items'] as $itemid => $proposer_table_qty) {
+//    if (!isset($reformatted_inventory[$itemid]['available'])) {
+//      $reformatted_inventory[$itemid] = array();
+//      $reformatted_inventory[$itemid]['available'] = 0;
+//      }
+//    if ($proposer_table_qty > $reformatted_inventory[$itemid]['available']) {
+//      $trade_error = TRUE;
+//      echo "You have suggested trading {$proposer_table_qty}x {$reformatted_inventory[$itemid]['name']} but you have only {$reformatted_inventory[$itemid]['available']} available. <br />";
+//      }
+//    }
+//  if ($trade_error) {
+//    trigger_error("Cannot suggest this trade -- it's not possible to trade a larger quantity of something than you currently have available.",E_USER_ERROR);
+//    }
+//
+//  $sql = "INSERT INTO `trades` (`proposer_userid`,`proposed_userid`,`status`) VALUES ('{$trade['proposer']['userid']}','{$trade['proposed']['userid']}','pending');";
+//  $insert_link = mysql_query($sql,$mysql_link);
+//  if ($insert_link) {
+//    $tradeid = mysql_insert_id($mysql_link);
+//    }
+//  else {
+//    trigger_error($general_oops,E_USER_ERROR);
+//    //echo $sql . " gave " . mysql_error() . "\n";
+//    }
+//
+//  $trade_detail_rows = max(sizeof($trade['proposer']['items']),sizeof($trade['proposed']['items']));
+//  $proposer_item_keys = array_keys($trade['proposer']['items']);
+//  $proposed_item_keys = array_keys($trade['proposed']['items']);
+//
+//
+//  for ($i = 0; $i < $trade_detail_rows; $i++) {
+//    if (isset($proposer_item_keys[$i])) {
+//      $proposer_item_qty = $trade['proposer']['items'][$proposer_item_keys[$i]];
+//      $proposer_item = $proposer_item_keys[$i];
+//      }
+//    else {
+//      $proposer_item_qty = '0';
+//      $proposer_item = '0';
+//      }
+//    if (isset($proposed_item_keys[$i])) {
+//      $proposed_item_qty = $trade['proposed']['items'][$proposed_item_keys[$i]];
+//      $proposed_item = $proposed_item_keys[$i];
+//      }
+//    else {
+//      $proposed_item_qty = '0';
+//      $proposed_item = '0';
+//      }
+//    //FUTURE: COMBINE INTO SINGLE QUERY!
+//    $sql = "INSERT INTO `alchemake`.`tradedetails` (`tradeid`, `proposer_itemid`, `proposer_qty`, `proposed_itemid`, `proposed_qty`) VALUES ('$tradeid', '$proposer_item', '$proposer_item_qty', '$proposed_item', '$proposed_item_qty');";
+//    $insert_link = mysql_query($sql,$mysql_link);
+//    }
+//}
+
+public function rejectAction() {
   //TODO: Rewrite
   if ($user_role & PROPOSED) {
     $sql = "UPDATE `alchemake`.`trades` SET `status` = 'rejected' WHERE `trades`.`tradeid` ={$_GET['tradeid']} LIMIT 1 ;";

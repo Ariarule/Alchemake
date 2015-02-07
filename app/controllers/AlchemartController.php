@@ -45,7 +45,6 @@ class AlchemartController extends AlchemakeController {
       $this->dispatcher->forward(array('action'=>'index'));
     }
     else {
-      $order[1] = 0 - $total;
       $resultset_query = ["itemid = 1"]; //special value for money
       foreach ($order as $itemid => $instructions) {
         $resultset_query[] = "itemid = $itemid";
@@ -53,12 +52,15 @@ class AlchemartController extends AlchemakeController {
       $resultset_query = implode(' or ',$resultset_query);
       $inventory_to_update = $user->getInventory($resultset_query);
 
+      $order[1] = array('qty' => 0 - $total);
+      
       foreach ($inventory_to_update as $line_to_update) {
         $line_to_update->qty += $order[$line_to_update->itemid]['qty'];
         $line_to_update->save();
       }
       $this->flashSession->notice("Success! Your inventory has been updated.");
       $this->flashSession->notice("You currently have AY $new_buying_power");
+      $this->dispatcher->forward(array('action'=>'index'));
     }
   }
 
