@@ -48,10 +48,10 @@ class InventoryController extends AlchemakeController {
 
       if (!$combination) {
         $this->flashSession->notice("Sorry, these items are alchemically "
-         "incompatible and don't make anything when you combine them.");
+         . "incompatible and don't make anything when you combine them.");
       }
       else {
-        if ((isset($combination->preq_tool_itemid)
+        if ((isset($combination->preq_tool_itemid))
           && ($combination->preq_tool_itemid > 0))
           {
             //TODO: Add prereq item logic

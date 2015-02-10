@@ -111,37 +111,53 @@ public function rejectAction() {
 }
 
 public function withdrawAction() {
-    return $this->delTrade('proposer_userid','withdrawn')
+    return $this->delTrade('proposer_userid','withdrawn');
 }
-    
+
+public function counterofferAction() {
+    $this->delTrade('proposed_userid', 'counteroffered');
+    $this->dispatcher->forward(array("action" => 'propose'));
+}
+
+private function transferItem($from,$to,$itemid,$qty) {
+    $from_invent = Inventory::findFirst("userid = $from and itemid = $itemid");
+    $from_invent->qty -= $qty;
+    $to_invent = Inventory::findFirst("userid = $to and itemid = $itemid");
+    if (!to_invent) {
+        $to_invent = new Inventory();
+        $to_invent->itemid = $itemid;
+        $to_invent->userid = $to;
+        $to_invent->qty = $qty;
+    }
+    else {
+        $to_invent->qty += $qty;
+    }
+    $to_invent->save();
+    $from_invent->save();
+}
+
 public function acceptAction() {
-  //TODO: Rewrite
-  if ($user_role & PROPOSED) {
-    $sql = "SELECT * FROM `tradedetails` WHERE `tradeid` = {$_GET['tradeid']}";
-    $tradedetails_r = mysql_query($sql,$mysql_link);
-    $tradedetails = set_of_rows_to_table($tradedetails_r);
-
-    foreach ($tradedetails as $details) {
-      if ($details['proposer_qty'] > 0) {
-        item_transfer($trade['proposer_userid'],$trade['proposed_userid'],$details['proposer_itemid'],$details['proposer_qty']);
+    $trade = Trades::findFirst("" . (int)$this->getPost('tradeid'));
+    if (!$trade || $this->userThatIsLoggedIn() !== $trade->proposed_userid) {
+        $this->flashSession->error("You cannot accept this trade");
+        $this->dispatcher->forward(array('controller' => 'users',
+            'action' => 'index'));
+    }
+    $trade->status = 'completed';
+    $proposer = $trade->proposer_userid;
+    $proposed = $trade->proposed_userid;
+    foreach ($trade->tradedetails as $trade_detail) {
+        if ($trade_detail->direction = 'TO_PROPOSER') {
+            $to = $proposer; $from = $proposed;
         }
-      if ($details['proposed_qty'] > 0) {
-        item_transfer($trade['proposed_userid'],$trade['proposer_userid'],$details['proposed_itemid'],$details['proposed_qty']);
+        else {
+            $to = $proposed; $from = $proposer;
         }
-      }
-          $sql = "UPDATE `alchemake`.`trades` SET `status` = 'complete' WHERE `trades`.`tradeid` ={$_GET['tradeid']} LIMIT 1 ;";
-          $sql_r = mysql_query($sql,$mysql_link);
-          if ($sql_r) {
-      echo "Trade complete!";
-      }
-          else {
-      trigger_error("<!--FAILED in tradeaction.php -->",E_USER_NOTICE);
-      }
-          }
-      else {
-        trigger_error("Only the person that has received this offer can accept it.",E_USER_ERROR);
-        }
+        $this->transferItem($from,
+                $to,
+                $trade_detail->itemid,
+                $trade_detail->qty);
+    }
+    $trade->save();
   }
-
-
 }
