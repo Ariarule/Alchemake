@@ -18,7 +18,6 @@ class Users extends Phalcon\Mvc\Model {
 
   public function initialize() {
     $this->skipAttributes(['userid',
-                           'emailaddress',
                            'rank',
                            'last_drop',
                            'last_allowence',
@@ -59,7 +58,7 @@ class Users extends Phalcon\Mvc\Model {
     //FIXME: networkcredential not working for new signups
     //$this->validate(new PresenseOf(array('field' => 'networkcredential',
     //  'message' => 'A password or equivalent login credential is required.')));
-    return $this->validationHasFailed() !== TRUE;
+    return $this->validationHasFailed() != TRUE;
   }
 
   private function giverUpdate($field) {

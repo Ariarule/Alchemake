@@ -21,7 +21,7 @@ class UsersController extends AlchemakeController {
     $password = $this->request->getPost("password");
     $user = $this->userLookupBy($email);
 
-    if ($user->networkid !== 'email') {
+    if (!isset($email) || $email === NULL || $user->networkid !== 'email') {
       //only allow manual logins for accounts which have an email credential
       $this->dispatcher->forward(array('action'=>'loginError'));
     }
