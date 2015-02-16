@@ -39,8 +39,10 @@ class InventoryController extends AlchemakeController {
         } else {
             $ingredients = [];
             $newqty = min($items); //can only make as many as the lowest prereq.
-            $item_numbers = sort(keys($items));
-            if (len($item_numbers) < 3) {
+            $item_numbers = array_keys($items);
+            sort($item_numbers);
+            
+            if (count($item_numbers) < 3) {
                 //unfortunately, 0 is used as a special value in the ingredient3
                 //to represent no item selected
                 //overall, this should be normalized
@@ -73,7 +75,7 @@ class InventoryController extends AlchemakeController {
                                             'qty' => ">= $newqty"]);
                     }
                     $ingredient_inventory = array_filter($ingredient_inventory);
-                    if (len($ingredient_inventory) !== len($ingredient_ids)) {
+                    if (count($ingredient_inventory) !== count($ingredient_ids)) {
                         $this->flashSession->notice("Sorry, "
                                 . " you are missing an item required for this combo.");
                     } else {

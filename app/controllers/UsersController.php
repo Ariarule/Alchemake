@@ -27,7 +27,8 @@ class UsersController extends AlchemakeController {
     }
     elseif ($user->checkNetworkcredential($password)) {
       $this->session->set('userid',$user->userid);
-      $this->dispatcher->forward(array('action'=>'completeLogin'));
+      $this->flashSession->notice("You are now logged in, have fun!");
+      $this->dispatcher->forward(array('action'=>'index'));
     }
     else {
       $this->dispatcher->forward(array('action'=>'loginError'));

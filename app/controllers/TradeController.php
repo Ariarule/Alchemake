@@ -95,6 +95,11 @@ public function proposeAction() {
     $this->saveTradeDetails($trade->tradeid, $proposer_items_info,'FROM_PROPOSER');
 }
 
+public function setupProposalAction() {
+    $items = $this->request->getPost();
+    //TODO: Write
+}
+
 private function delTrade($id_to_check,$new_status) {
   $tradeid = (int)$this->getPost('tradeid');
   $trade = Trades::findFirst('tradeid');
