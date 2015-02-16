@@ -1,6 +1,6 @@
 <?php
 
-class NonceController extends \Phalcon\Mvc\Controller  {
+class NonceController {
 
   private $password;
   private $expiry;
@@ -15,11 +15,9 @@ class NonceController extends \Phalcon\Mvc\Controller  {
   }
 
   public function encode($time) {
-    $hash = password_hash($this->passwordify($time),PASSWORD_DEFAULT);
-    $this->session->set($hash,TRUE);
-    return $hash;
+    return password_hash($this->passwordify($time),PASSWORD_DEFAULT);
   }
-  
+
   public function currentHash() {
     $time = time();
     return array('time' => $time,
@@ -28,8 +26,7 @@ class NonceController extends \Phalcon\Mvc\Controller  {
 
   public function check($time,$nonce) {
     $elapsed_time = time() - $time;
-    return ($this->session->has($nonce) 
-      && ($elapsed_time < $this->expiry)
+    return (($elapsed_time < $this->expiry)
       && (password_verify($this->passwordify($time),$nonce)));
   }
 }
