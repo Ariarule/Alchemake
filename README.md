@@ -1,4 +1,4 @@
-Alchemake is a game that I originally created as a hobby in 2010. Reliance on the old Facebook APIs caused it to stop working in late 2011 or so. In early 2015 it was relauched as stand-alone site. -- Nic, 2012-03-04
+Alchemake is a game that I originally created as a hobby in 2010. Reliance on the old Facebook APIs caused it to stop working in late 2011 or so. In early 2015 it will be relauched as stand-alone site. -- Nic, 2015-02-16
 
 ------
 
