@@ -1,7 +1,13 @@
 <?php
+use Phalcon\Mvc\View;
 
 class AlchemakeController extends \Phalcon\Mvc\Controller {
 
+  public function shallOutputJSON() {
+    $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
+    $this->response->setHeader("Content-Type", "application/javascript");
+    }
+    
   protected function userIsLoggedIn() {
     return $this->session->has("userid");
   }

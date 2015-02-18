@@ -1,5 +1,4 @@
 <?php
-use Phalcon\Mvc\View;
 
 class ComboController  extends AlchemakeController {
 
@@ -8,8 +7,7 @@ class ComboController  extends AlchemakeController {
   }
     
   public function listAction() {
-    $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
-    $this->response->setHeader("Content-Type", "application/javascript");
+    $this->shallOutputJSON();
 
     $items = array_map(function ($n) {return (int)$n;},
             $this->request->getPost('items'));

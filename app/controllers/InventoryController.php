@@ -1,7 +1,7 @@
 <?php
+use Phalcon\Mvc\Model\Resultset;
 
 class InventoryController extends AlchemakeController {
-
 
   public function indexAction() {
     //displays help
@@ -14,6 +14,23 @@ class InventoryController extends AlchemakeController {
         return FALSE;
     }
     return TRUE;
+  }
+  
+  public function listUserInventoryAction($userid) {
+      //this is fully public on purpose and without authentication
+      $this->shallOutputJSON();
+      $inventory_lister = Inventory::find(['userid' => $userid]);
+      $inventory = [];
+      if ($inventory_lister) {
+      foreach ($inventory_lister as $inventory_line) {
+                $outlist_line = [];
+                $outlist_line['itemid'] = $inventory_line->itemid;
+                $outlist_line['qty'] = $inventory_line->qty;
+                $outlist_line['itemname'] = $inventory_line->items->name;
+                $inventory[] = $outlist_line;
+            }
+        }
+      echo json_encode($inventory);
   }
   
   public function alchemakeAction() {

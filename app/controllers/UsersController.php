@@ -1,12 +1,22 @@
 <?php
 
 class UsersController extends AlchemakeController {
-
+    
   public function loginAction() {
     if($this->userIsLoggedIn()) {
       $this->flashSession->notice("You are already logged in.");
       $this->dispatcher->forward(array('action'=>'index'));
     }
+  }
+  
+  public function randomUserAction() {
+      $this->shallOutputJSON();
+      $min = Users::findFirst(['order' => 'userid ASC'])->userid;
+      $max = Users::findFirst(['order' => 'userid DESC'])->userid;
+      $rand_id = mt_rand($min, $max); //biased for nonsequential IDs
+      $rand_user = Users::findFirst(['conditions' => " userid <= $rand_id ",
+              'order' => ' userid DESC ']);
+      echo json_encode([$rand_user->userid,$rand_user->nickname]);
   }
 
   public function logoutAction() {
