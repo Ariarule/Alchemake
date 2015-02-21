@@ -1,0 +1,21 @@
+<?php
+  echo "<form method='POST'><table>";
+  echo "<thead><tr>
+    <th>Qty</th>
+    <th>Description<th>
+    <th>Action Qty <button type='reset'>Zero</button></th></tr></thead><tbody>";
+  foreach ($inventory as $inventory_line) {
+    echo "<tr>"
+      . "<td>{$inventory_line->qty}</td>"
+      . "<td>{$inventory_line->items->name}"
+      . " &ndash; "
+      . "{$inventory_line->items->description}</td>"
+      . '<td><input type="number" step="1" min="0" value="0"'
+      .  "name='items[{$inventory_line->items->itemid}]'"
+      .  " max='{$inventory_line->qty}'/></td>"
+      . "</tr>";
+  }
+  echo "</tbody></table>";
+  echo $form_buttons; //if SUBMIT buttons present
+    //they must include the form target
+  echo "</form>";
