@@ -11,8 +11,8 @@ $possible_f = array(
     echo "<h3>Your Inventory</h3>";
 
     if ($userinfo->inventory->count() > 0) {
-     $form_buttons = '<button formaction="\Trade\setupProposal" type="submit">Trade</button>&nbsp;'
-     . '<button formaction="\Inventory\alchemake" type="submit">Alchemake'
+     $form_buttons = '<button formaction="/Trade/setupProposal" type="submit">Trade</button>&nbsp;'
+     . '<button formaction="/Inventory/alchemake" type="submit">Alchemake'
      .'</button>';
      $this->partial('shared/inventoryTable',
         ['form_buttons' => $form_buttons,
