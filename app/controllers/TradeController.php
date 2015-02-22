@@ -2,6 +2,7 @@
 class TradeController extends AlchemakeController {
 
  private function cleanItems($dirty_items) {
+     //TODO: Fetch from the db a valid list of item ids to check
      $clean = [];
      foreach ($dirty_items as $item_id => $qty) {
          $clean[(int)$item_id] = (int)$qty;
@@ -95,9 +96,27 @@ public function proposeAction() {
     $this->saveTradeDetails($trade->tradeid, $proposer_items_info,'FROM_PROPOSER');
 }
 
+public function confirmProposalAction() {
+    $items = $this->cleanItems($this->request->getQuery('items'));
+    $proposed = $this->userLookupBy(
+            $this->request->getQuery('proposed_userid','int'),
+            'userid');
+    $asking_for = $this->cleanItems($this->request->getQuery('asking_for'));
+    if (!$proposed) {
+        //should not happen
+        $this->flashSession->error("Sorry, I don't know the user you're "
+                . "trying to trade with.");
+        $this->dispatcher->forward(['controller' => 'users',
+            'action' => 'index']);
+    }
+    $this->view->setVar('items',$items);
+    $this->view->setVar('proposed',$proposed->userid);
+    $this->view->setVar('asking_for',$asking_for);
+}
+
 public function setupProposalAction() {
-    $items = $this->request->getPost();
-    //TODO: Write
+    $items = $this->cleanItems($this->request->getPost('items'));
+    $this->view->setVar("items",$items);
 }
 
 private function delTrade($id_to_check,$new_status) {

@@ -1,5 +1,14 @@
 <?php
-  echo "<form method='POST'><table>";
+  if (!isset($omitform)) {
+      $omitform = FALSE;
+  }
+  if (!$omitform) {
+      echo "<form method='POST'>";
+  }
+  if (!isset($item_array_name)) {
+      $item_array_name = 'items';
+  }
+  echo "<table>";
   echo "<thead><tr>
     <th>Qty</th>
     <th>Description<th>
@@ -11,11 +20,13 @@
       . " &ndash; "
       . "{$inventory_line->items->description}</td>"
       . '<td><input type="number" step="1" min="0" value="0"'
-      .  "name='items[{$inventory_line->items->itemid}]'"
-      .  " max='{$inventory_line->qty}'/></td>"
+      .  " name='{$item_array_name}[{$inventory_line->items->itemid}]'"
+      .  " max='{$inventory_line->qty}' /></td>"
       . "</tr>";
   }
   echo "</tbody></table>";
-  echo $form_buttons; //if SUBMIT buttons present
-    //they must include the form target
-  echo "</form>";
+  if (!$omitform) {
+    echo $form_buttons; //if SUBMIT buttons present
+      //they must include the form target
+    echo "</form>";
+  }
