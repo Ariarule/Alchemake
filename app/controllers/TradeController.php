@@ -75,12 +75,9 @@ public function proposeAction() {
             ." suggesting this trade to");
         return FALSE;
     }
-    $trade->proposed_userid = $posted_trade['proposed'];
-        //valid userid, just used to lookup user
-    $proposer_user = $this->userThatIsLoggedIn();
     
-    $proposed_items_info = $this->cleanItems($posted_trade['proposed_items']);
-    $proposer_items_info = $this->cleanItems($posted_trade['proposer_items']);
+    $proposed_items_info = $this->cleanItems($posted_trade['asking_for']);
+    $proposer_items_info = $this->cleanItems($posted_trade['items']);
 
     $trade->status =  'pending';
     $shorts = $this->userQtyShorts($proposer_user,$proposer_items_info);
@@ -110,7 +107,7 @@ public function confirmProposalAction() {
             'action' => 'index']);
     }
     $this->view->setVar('items',$items);
-    $this->view->setVar('proposed',$proposed->userid);
+    $this->view->setVar('proposed',$proposed);
     $this->view->setVar('asking_for',$asking_for);
 }
 
