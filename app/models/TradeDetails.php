@@ -3,7 +3,6 @@ class TradeDetails extends Phalcon\Mvc\Model {
 
   public $tradeid;
   public $direction;
-  public $party;
   public $itemid;
   public $qty;
 

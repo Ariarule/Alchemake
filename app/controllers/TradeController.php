@@ -19,9 +19,10 @@ private function proposedQtys($user) {
             $items[$trade_detail->itemid] = $trade_detail->qty;
         }
     }
+    return $items;
 }
 
-private function compareProposedInventory($user) {
+private function tallyProposedInventory($user) {
     $net = [];
     $proposed_qtys = $this->proposedQtys($user);
     foreach ($proposed_qtys as $itemid => $proposed_qty) {
@@ -37,38 +38,41 @@ private function compareProposedInventory($user) {
 
 private function userQtyShorts($user,$proposals) {
     $problems = [];
-    $availabilities = $this->compareProposedInventory($user);
+    $availabilities = $this->tallyProposedInventory($user);
     foreach ($proposals as $itemid => $proposed_qty) {
-        if ($availabilities[$itemid] > $proposed_qty) {
-            $problems[$items] = 
-                    array('proposed' => $proposed_qty
-                        , 'available' => $availabilities[$itemid]);
+            if (isset($availabilities[$itemid]) 
+                && ($availabilities[$itemid] > $proposed_qty)) {
+                $problems[$itemid] = array('proposed' => $proposed_qty
+                            , 'available' => $availabilities[$itemid]);
+            }
         }
-    }
-    return $problems;
+        return $problems;
 }
 
-private function addDetailToTrade($tradeid,$direction,$itemid,$qty) {
+private function addDetailToTrade($direction,$itemid,$qty) {
     $trade_detail = new TradeDetails();
-    $trade_detail->tradeid = $tradeid;
     $trade_detail->itemid = $itemid;
     $trade_detail->direction = $direction;
     $trade_detail->qty = $qty;
-    return $trade_detail->save();
+    return $trade_detail;
 }
 
-private function saveTradeDetails($tradeid,$item_details,$direction) {
+private function saveTradeDetails($item_details,$direction) {
+    $trade_details = [];
     foreach ($item_details as $itemno => $qty) {
-        $this->addDetailToTrade($tradeid,$direction,$itemno,$qty);
+        $trade_details[] = $this->addDetailToTrade($direction,$itemno,$qty);
     }
+    return $trade_details;
 }
 
 public function proposeAction() {
     $posted_trade = $this->request->getPost();
     $trade = new Trades();
-    $trade->proposer_userid = $this->userThatIsLoggedIn()->userid;
+    $proposer_user = $this->userThatIsLoggedIn();
+    $trade->proposer_userid = $proposer_user->userid;
     $posted_trade['proposed'] = (int)$posted_trade['proposed'];
     
+
     $proposed_user = $this->userLookupBy($posted_trade['proposed'], 'userid');
     if (!$proposed_user) {
         $this->flashSession->error("I couldn't find the player you were"
@@ -76,6 +80,7 @@ public function proposeAction() {
         return FALSE;
     }
     
+    $trade->proposed_userid = $proposed_user->userid;
     $proposed_items_info = $this->cleanItems($posted_trade['asking_for']);
     $proposer_items_info = $this->cleanItems($posted_trade['items']);
 
@@ -88,9 +93,19 @@ public function proposeAction() {
             'action'=>'index'));
     }
     
-    $trade->save();
-    $this->saveTradeDetails($trade->tradeid, $proposed_items_info,'TO_PROPOSER');
-    $this->saveTradeDetails($trade->tradeid, $proposer_items_info,'FROM_PROPOSER');
+    $trade_details = 
+        array_merge($this->saveTradeDetails($proposed_items_info,'TO_PROPOSER'),
+                $this->saveTradeDetails($proposer_items_info,'FROM_PROPOSER'));
+    $trade->tradeDetails = $trade_details;
+    if (!$trade->save()) {
+        foreach ($trade->getMessages() as $message) {
+            $this->flashSession->error($message);
+        }
+    }
+    else {
+        $this->flashSession->notice("Your trade has been proposed");
+    }
+    $this->dispatcher->forward(['controller'=>'users','action'=>'index']);
 }
 
 public function confirmProposalAction() {
