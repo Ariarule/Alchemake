@@ -13,4 +13,10 @@ class Trades extends Phalcon\Mvc\Model  {
     $this->belongsTo('proposer_userid','Users','userid');
     $this->belongsTo('proposed_userid','Users','userid');
   }
+  
+  public function acceptable() {
+      return ((time() - strtotime($this->timestamp)) < 7776000
+        && $this->status === 'proposed');
+  }
+  
 }

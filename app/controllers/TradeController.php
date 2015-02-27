@@ -133,7 +133,7 @@ public function setupProposalAction() {
 
 private function delTrade($id_to_check,$new_status) {
   $tradeid = (int)$this->getPost('tradeid');
-  $trade = Trades::findFirst('tradeid');
+  $trade = Trades::findFirst("tradeid => $tradeid");
   $trade_info = (array)$trade;
   if ($trade_info[$id_to_check] == $this->userThatIsLoggedIn()->userid
           && ($trade->status == 'pending')) {
