@@ -67,7 +67,8 @@ class InventoryController extends AlchemakeController {
                 $item_numbers[] = 0;
             }
             foreach ($item_numbers as $i => $item_number) {
-                $ingredients["ingredient" . $i + 1 . "_itemid"] = $item_number;
+                $ingredients["ingredient" . ($i + 1) . "_itemid"]
+                        = $item_number;
             }
             $combination = Combinations::findfirst($ingredients);
 
@@ -81,23 +82,28 @@ class InventoryController extends AlchemakeController {
                             . " these times.");
                 } else {
                     //TODO: Swap items based on $newqty and combination
-                    $ingredient_ids = (array) $combination;
-                    unset($ingredient_ids['preq_tool_itemid']);
-                    unset($ingredient_ids['itemid']);
+                    $ingredient_ids = []; 
+                    $combo_array = (array)$combination;
+                    foreach ([1,2,3] as $i) {
+                        $ingredient_ids[] 
+                                = $combo_array["ingredient{$i}_itemid"];
+                    }
                     $ingredient_ids = array_values(array_filter($ingredient_ids));
-                    $ingredient_inventory = array();
+                    $ingredient_inventory = [];
                     foreach ($ingredient_ids as $ingredient_id) {
                         $ingredient_inventory[] = Inventory::findFirst(
-                                        ['userid' => $user->userid, 'itemid' => $ingredient_id,
-                                            'qty' => ">= $newqty"]);
+                                        "userid =  {$user->userid}   AND 
+                                         itemid =   $ingredient_id   AND
+                                         qty    >=  $newqty");
                     }
                     $ingredient_inventory = array_filter($ingredient_inventory);
                     if (count($ingredient_inventory) !== count($ingredient_ids)) {
                         $this->flashSession->notice("Sorry, "
                                 . " you are missing an item required for this combo.");
                     } else {
-                        $new_item = Inventory::findFirst(['userid' => $user->userid,
-                                    'itemid' => $combination->itemid]);
+                        $new_item = Inventory::findFirst(
+                                "userid = {$user->userid} AND
+                                 itemid = {$combination->itemid}");
                         if (!$new_item) {
                             $new_item = new Inventory;
                             $new_item->itemid = $combination->itemid;

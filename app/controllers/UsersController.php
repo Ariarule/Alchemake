@@ -112,7 +112,7 @@ class UsersController extends AlchemakeController {
           $this->flashSession->notice("You have been given $allowence AY.");
         }
         if ((rand(1,86400) < $time_from_drop) && ($time_from_drop > 120)) {
-          if ($user->giveItems) {
+          if ($user->giveItems()) {
             $this->flashSession->notice("New items! Check your inventory.");
           }
         }
