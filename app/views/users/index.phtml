@@ -1,10 +1,31 @@
 <?php $this->flashSession->output();
 
 echo "<h2>Welcome {$userinfo->nickname}</h2>";
-$possible_f = array(
-  'T' => function () use ($userinfo) { //trades
+$possible_f = ['T' => function () use ($userinfo) { //trades
     echo "<h3>Trades</h3>";
-    //print_r($userinfo->trades); //TODO: Write T function
+    $trade_types = [['field' => 'proposer',
+                        'label' => 'You have suggested:',
+                        'actions' => ['withdraw']],
+                    ['field' => 'proposed',
+                        'label' => 'Others have suggested:',
+                        'actions' => ['reject', 'counteroffer']]];
+        foreach ($trade_types as $trade_type) {
+            echo "<h4>{$trade_type['label']}</h4>";
+            $trades = Trades::findAcceptableByUserId($userinfo->userid,
+                    $trade_type['field']);
+            if ($trades->count() > 0) {
+                echo "<ul>";    
+                foreach ($trades as $trade) {
+                    echo "<li>{$trade->proposer->nickname} &amp;"
+                    . " {$trade->proposed->nickname}</li>";
+                }
+                echo "</ul>";
+            }
+            else {
+                echo "...no pending trades.";
+            }
+        }
+    //print_r();
   },
 
   'I' => function () use ($userinfo) { //inventory
@@ -37,7 +58,7 @@ else {
       </ul>
     </div>
     <?php
-  });
+  }];
 
 foreach (str_split($userinfo->main_order,1) as $section) {
   if (isset($possible_f[$section])) {
