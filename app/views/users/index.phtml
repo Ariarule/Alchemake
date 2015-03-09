@@ -6,7 +6,7 @@ function trade_table($trade,$possible_actions) {
         $trade_details[$trade_detail->direction][] = $trade_detail;
     }
     echo "<table><thead><tr><td>{$trade->proposer->nickname}</td>";
-    echo "<td>{$trade->proposed->nickname}</td></tr></thead><tbody>";
+    echo "<td>{$trade->proposed->nickname}</td></tr></thead><tbody><tr>";
     foreach ($trade_details as $party_trade_details) {
         echo "<td><ul>";
         foreach ($party_trade_details as $trade_detail) {
@@ -14,11 +14,11 @@ function trade_table($trade,$possible_actions) {
         }
         echo "</ul></td>";
     }
-    echo "</tbody></table>";
+    echo "</tr></tbody></table>";
     echo '<form method="POST"><input type="hidden" name="tradeid"';
-    echo " value=\"\">";
+    echo " value=\"{$trade->tradeid}\">";
     foreach ($possible_actions as $possible_action) {
-        echo "<button type=\"submit\" formmethod=\"{$possible_action}\">"
+        echo "<button type=\"submit\" formaction=\"/trade/{$possible_action}\">"
         . ucwords($possible_action) . "</button>";
     }
     echo "</form>";
@@ -32,7 +32,7 @@ $possible_f = ['T' => function () use ($userinfo) { //trades
                         'actions' => ['withdraw']],
                     ['field' => 'proposed',
                         'label' => 'Others have suggested:',
-                        'actions' => ['reject', 'counteroffer']]];
+                        'actions' => ['accept','reject', 'counteroffer']]];
         foreach ($trade_types as $trade_type) {
             echo "<h4>{$trade_type['label']}</h4>";
             $trades = Trades::findAcceptableByUserId($userinfo->userid,
