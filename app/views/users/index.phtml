@@ -1,5 +1,29 @@
 <?php $this->flashSession->output();
 
+function trade_table($trade,$possible_actions) {
+    $trade_details = ['FROM_PROPOSER' => [], 'TO_PROPOSER' => []];
+    foreach ($trade->tradeDetails as $trade_detail) {
+        $trade_details[$trade_detail->direction][] = $trade_detail;
+    }
+    echo "<table><thead><tr><td>{$trade->proposer->nickname}</td>";
+    echo "<td>{$trade->proposed->nickname}</td></tr></thead><tbody>";
+    foreach ($trade_details as $party_trade_details) {
+        echo "<td><ul>";
+        foreach ($party_trade_details as $trade_detail) {
+            echo "<li>{$trade_detail->qty}x {$trade_detail->Items->name}</li>";
+        }
+        echo "</ul></td>";
+    }
+    echo "</tbody></table>";
+    echo '<form method="POST"><input type="hidden" name="tradeid"';
+    echo " value=\"\">";
+    foreach ($possible_actions as $possible_action) {
+        echo "<button type=\"submit\" formmethod=\"{$possible_action}\">"
+        . ucwords($possible_action) . "</button>";
+    }
+    echo "</form>";
+}
+
 echo "<h2>Welcome {$userinfo->nickname}</h2>";
 $possible_f = ['T' => function () use ($userinfo) { //trades
     echo "<h3>Trades</h3>";
@@ -14,12 +38,9 @@ $possible_f = ['T' => function () use ($userinfo) { //trades
             $trades = Trades::findAcceptableByUserId($userinfo->userid,
                     $trade_type['field']);
             if ($trades->count() > 0) {
-                echo "<ul>";    
                 foreach ($trades as $trade) {
-                    echo "<li>{$trade->proposer->nickname} &amp;"
-                    . " {$trade->proposed->nickname}</li>";
+                    trade_table($trade, $trade_type['actions']);
                 }
-                echo "</ul>";
             }
             else {
                 echo "...no pending trades.";
