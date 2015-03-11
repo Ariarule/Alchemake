@@ -1,6 +1,7 @@
 <?php
 
 use Phalcon\Mvc\Model\Validator\Email,
+    Phalcon\Mvc\Model\Validator\Uniqueness,
     Phalcon\Mvc\Model\Validator\PresenceOf;
 
 class Users extends Phalcon\Mvc\Model {
@@ -18,6 +19,8 @@ class Users extends Phalcon\Mvc\Model {
 
   public function initialize() {
     $this->skipAttributes(['userid',
+                           'networkcredential', //skip adding the default for 
+                                                //custom message
                            'rank',
                            'last_drop',
                            'last_allowence',
@@ -42,7 +45,6 @@ class Users extends Phalcon\Mvc\Model {
   }
 
   public function getNetworkcredential() {
-    trigger_error("get",E_USER_ERROR);
     if (isset($this->networkcredential)
     &&  (len($this->networkcredential) > 0)) {
       return TRUE;
@@ -53,11 +55,16 @@ class Users extends Phalcon\Mvc\Model {
   }
 
   public function validation() {
-    $this->validate(new Email(array('field'   => 'emailaddress',
-      'message' => 'Invalid email address.')));
-    //FIXME: networkcredential not working for new signups
-    //$this->validate(new PresenseOf(array('field' => 'networkcredential',
-    //  'message' => 'A password or equivalent login credential is required.')));
+    $this->validate(new PresenceOf(['field' => 'nickname',
+      'message' => 'A nickname is required.']));
+    $this->validate(new Email(['field'   => 'emailaddress',
+      'message' => 'Invalid email address.']));
+    $this->validate(new Uniqueness(['field' => 'nickname',
+      'message' => 'Someone already has that nickname.'])); 
+    $this->validate(new PresenceOf(['field' => 'networkcredential',
+      'message' => 'A password is required.']));
+    //See setNetworkcredential above, which does actual checking
+    //for this due to need to hash the passwords
     return $this->validationHasFailed() != TRUE;
   }
 
