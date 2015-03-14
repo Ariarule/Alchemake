@@ -14,9 +14,8 @@ function trade_table($trade,$possible_actions) {
         }
         echo "</ul></td>";
     }
-    echo "</tr></tbody></table>";
-    echo '<form method="POST"><input type="hidden" name="tradeid"';
-    echo " value=\"{$trade->tradeid}\">";
+    echo '</tr></tbody></table><form method= "POST"><input type="hidden" '
+        . "name=\"tradeid\" value=\"{$trade->tradeid}\">";
     foreach ($possible_actions as $possible_action) {
         echo "<button type=\"submit\" formaction=\"/trade/{$possible_action}\">"
         . ucwords($possible_action) . "</button>";
@@ -25,8 +24,8 @@ function trade_table($trade,$possible_actions) {
 }
 
 echo "<h2>Welcome {$userinfo->nickname}</h2>";
-$possible_f = ['T' => function () use ($userinfo) { //trades
-    echo "<h3>Trades</h3>";
+$possible_f = ['T' => ['head' => 'Trades', 'f' =>
+    function () use ($userinfo) { //trades
     $trade_types = [['field' => 'proposer',
                         'label' => 'You have suggested:',
                         'actions' => ['withdraw']],
@@ -46,12 +45,8 @@ $possible_f = ['T' => function () use ($userinfo) { //trades
                 echo "...no pending trades.";
             }
         }
-    //print_r();
-  },
-
-  'I' => function () use ($userinfo) { //inventory
-    echo "<h3>Your Inventory</h3>";
-
+  }],
+  'I' => ['head' => 'Inventory', 'f' => function () use ($userinfo) {
     if ($userinfo->inventory->count() > 0) {
      $form_buttons = '<button formaction="/Trade/setupProposal" type="submit">Trade</button>&nbsp;'
      . '<button formaction="/Inventory/alchemake" type="submit">Alchemake'
@@ -64,26 +59,40 @@ else {
   echo "You have no inventory right now. :(";
 }   
 
-  },
+  }],
 
-  'U' => function () use ($userinfo) { //usercard
+  'U' => ['head' => 'Usercard', 'f' => function () use ($userinfo) {
     ?><!--
     <?php echo "{$userinfo->userid}"; ?>
     -->
     <h3>Usercard</h3>
     <div id="userinfo">
       <ul>
+        <li>You are known as 
+            <form action="/users/rename/" method="POST">
+                <input type="text" name="nickname" 
+                         value="<?= $userinfo->nickname ?>">
+            </form>
+        </li>
         <li>Basic item delivery: <?= explode($userinfo->last_drop,' ')[0] ?></li>
         <li>AY Allowence: <?= explode($userinfo->last_allowence,' ')[0] ?></li>
         <li>Email Address: <?= $userinfo->emailaddress ?></li>
       </ul>
     </div>
     <?php
-  }];
+  }]];
 
-foreach (str_split($userinfo->main_order,1) as $section) {
+foreach (str_split($userinfo->main_order,1) as $i => $section) {
+  if ($i === 1) {
+      $possible_f[$section]['head'] = $possible_f[$section]['head'] 
+        . '<form method="POST" action="/users/reorder">'
+        . '<button name="direction" value="-1">&uarr;</button>'
+        . '<button name="direction" value="1">&darr;</button>'
+        . '</form>';
+  }
   if (isset($possible_f[$section])) {
-    $possible_f[$section]();
+    echo "<h3>{$possible_f[$section]['head']}</h3>";
+    $possible_f[$section]['f']();
   }
 }
 ?>

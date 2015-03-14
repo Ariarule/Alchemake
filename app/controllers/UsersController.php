@@ -22,6 +22,31 @@ class UsersController extends AlchemakeController {
   public function logoutAction() {
     $this->session->destroy();
   }
+  
+  public function renameAction() {
+      $user = $this->userThatIsLoggedIn();
+      if ($user) {
+          $user->nickname = $this->request->getPost('nickname');
+          $user->update();
+             foreach ($user->getMessages() as $message) {
+                $this->flashSession->notice("$message");
+             } 
+          }
+      $this->dispatcher->forward(["controller" => "users","action" => 'index']);
+  }
+  
+  public function reorderAction() {
+      $user = $this->userThatIsLoggedIn();
+      if ($user) {
+          if (!$user->reorder((int)$this->request->getPost('direction'))) {
+             foreach ($user->getMessages() as $message) {
+                $this->flashSession->notice("$message");
+             } 
+          }
+      }
+      $user->save();
+      $this->dispatcher->forward(["controller" => "users","action" => 'index']);
+  }
 
   public function loginEmailAction() {
     //Accepts from the login form information on logging in using email

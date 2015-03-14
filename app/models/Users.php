@@ -17,14 +17,25 @@ class Users extends Phalcon\Mvc\Model {
 
   protected $networkcredential;
 
+  public function reorder($middle_move = 1) {
+      if (($middle_move !== 1) && ($middle_move !== -1)) {
+          $middle_move = 0;
+      }
+      $prev_order = $this->main_order;
+      $new_order = $this->main_order;
+      $position = $middle_move + 1;
+      $new_order[$position] = $prev_order[1];
+      $new_order[1] = $prev_order[$position];
+      $this->main_order = $new_order;
+      return $this->update();
+  }
+  
   public function initialize() {
-    $this->skipAttributes(['userid',
-                           'networkcredential', //skip adding the default for 
-                                                //custom message
-                           'rank',
-                           'last_drop',
-                           'last_allowence',
-                           'main_order']);
+    $this->skipAttributesOnCreate(['userid',
+                                   'rank',
+                                   'last_drop',
+                                   'last_allowence',
+                                   'main_order']);
     $this->hasMany('userid','Inventory','userid');
     $this->hasMany('userid','Trades','proposer_userid');
     $this->hasMany('userid','Trades','proposed_userid');
@@ -64,7 +75,7 @@ class Users extends Phalcon\Mvc\Model {
     $this->validate(new PresenceOf(['field' => 'networkcredential',
       'message' => 'A password is required.']));
     //See setNetworkcredential above, which does actual checking
-    //for this due to need to hash the passwords
+    //for this due to need to hash the passwords 
     return $this->validationHasFailed() != TRUE;
   }
 
