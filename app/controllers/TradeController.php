@@ -161,8 +161,10 @@ class TradeController extends AlchemakeController {
     }
 
     public function counterofferAction() {
-        $this->delTrade('proposed_userid', 'counteroffered',
-            ["action" => 'propose']);
+        $this->delTrade('proposed_userid', 'counteroffered');
+        //TODO: Show a new trade form with the previous details like old game
+        $this->flashSession->notice("Trade to be counteroffered. Remember"
+                . "to suggest a new trade.");
     }
 
     private function transferItem($from,$to,$itemid,$qty) {
