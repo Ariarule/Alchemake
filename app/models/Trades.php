@@ -17,7 +17,7 @@ class Trades extends Phalcon\Mvc\Model  {
   }
   
   public function isAcceptable() {
-      return @strtotime($timestamp) < 2678400;
+      return strtotime($timestamp) < 2678400;
       //this intentionally has a slight grace period on it
       //compared to findAcceptable
       //the intention is that a trade is available for action for 

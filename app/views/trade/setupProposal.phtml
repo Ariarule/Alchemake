@@ -2,8 +2,9 @@
 $this->flashSession->output();
 
 $users = USERS::find();
-$inventory = INVENTORY::find(['GROUP' => 'itemid',
-    'sort' => 'qty DESC']);
+$inventory = INVENTORY::find(['conditions' => '1 group by itemid']);
+    //this is not the ideal way to do this but does give the format
+    //expected by InventoryTable
 ?>
 <!--TODO: AJAXify this form-->
 <form action="/trade/confirmProposal/" method="GET">
@@ -25,6 +26,7 @@ $inventory = INVENTORY::find(['GROUP' => 'itemid',
     <?php
     $this->partial('shared/inventoryTable',
         ['omitform' => TRUE,
+         'omitqty' => TRUE,
          'item_array_name' => 'asking_for',
          'inventory' => $inventory]);
     ?>

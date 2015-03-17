@@ -124,12 +124,8 @@ class UsersController extends AlchemakeController {
         //supposed to be an integer between 0 and 100 inclusive
         //NOT a float between 0.0 and 1.0
 
-      $time_from_ay    = time() - @strtotime($user->last_allowence);
-      $time_from_drop  = time() - @strtotime($user->last_drop);
-        //suppress the warning from strtotime about the how the system timezone
-        //cannot be trusted. PHP cannot know anyway
-        //that the system isn't set up correctly for the string that we have.
-        //possible improvement: get the timezone from the db? ini file?
+      $time_from_ay    = time() - strtotime($user->last_allowence);
+      $time_from_drop  = time() - strtotime($user->last_drop);
 
       if (($time_from_ay > $delay) && (rand(0,100) < $probability)) {
         $allowence = $user->giveAllowence();

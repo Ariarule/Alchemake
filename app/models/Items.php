@@ -8,6 +8,15 @@ class Items extends Phalcon\Mvc\Model {
   public $description;
   public $image;
 
+  public static function clean($dirty_items) {
+        //TODO: Fetch from the db a valid list of item ids to check
+        $clean = [];
+        foreach ($dirty_items as $item_id => $qty) {
+            $clean[(int)$item_id] = (int)$qty;
+        }
+        return $clean;
+    }
+  
   public function initialize() {
     $this->belongsTo('itemid','Inventory','itemid');
     foreach ([1,2,3] as $i) {

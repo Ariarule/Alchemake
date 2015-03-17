@@ -8,20 +8,24 @@
   if (!isset($item_array_name)) {
       $item_array_name = 'items';
   }
+  if (!isset($omitqty)) {
+      $omitqty = FALSE;
+  }
   echo "<table>";
   echo "<thead><tr>
-    <th>Qty</th>
+    <th>".($omitqty ? '' : 'Qty')."</th>
     <th>Description<th>
     <th>Action Qty <button type='reset'>Zero</button></th></tr></thead><tbody>";
   foreach ($inventory as $inventory_line) {
     echo "<tr>"
-      . "<td>{$inventory_line->qty}</td>"
+      . "<td>" . ($omitqty ? '' : "{$inventory_line->qty}") . "</td>" 
       . "<td>{$inventory_line->items->name}"
       . " &ndash; "
       . "{$inventory_line->items->description}</td>"
       . '<td><input type="number" step="1" min="0" value="0"'
       .  " name='{$item_array_name}[{$inventory_line->items->itemid}]'"
-      .  " max='{$inventory_line->qty}' /></td>"
+      .  ($omitqty ? '' : " max='{$inventory_line->qty}'")
+      .  " /></td>"
       . "</tr>";
   }
   echo "</tbody></table>";
