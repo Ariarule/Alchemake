@@ -11,15 +11,25 @@ class Inventory extends Phalcon\Mvc\Model {
     $this->hasOne('itemid','Items','itemid');
   }
 
-  public function transfer($from,$to,$itemid,$qty) {
-    //TODO: Write transfer function
+  public static function addItems($userid,$itemno,$qty) {
+    $inventory_line = Self::findFirst("userid = $userid and itemid = $itemno");
+      if (!$inventory_line) {
+          $inventory_line = new Self();
+          $inventory_line->itemid = $itemno;
+          $inventory_line->userid = $userid;
+          $inventory_line->qty = $qty;
+      }
+      else {
+          $inventory_line->qty += $qty; //note quantity can be negative
+      }
+      return $inventory_line->save();
   }
-
-  public function inventory_drop($userid) {
+  
+  public function inventoryDrop($userid) {
     $number_of_items = rand(2,4);
     $success_on_all = TRUE;
     for ($i = 0; $i < $number_of_items; $i++) {
-      $itemno = rand(16,25); //should be selected out of an array of basic items
+      $itemno = Items::randomBasicItem()->itemid;
       $qty = rand(1,3);
       if(!add_items($userid,$itemno,$qty)) {
         $success_on_all = FALSE;
@@ -55,20 +65,11 @@ class Inventory extends Phalcon\Mvc\Model {
   }
 
   public static function transferItem($from,$to,$itemid,$qty) {
-      $from_invent = Self::findFirst("userid = $from and itemid = $itemid");
-      $from_invent->qty -= $qty;
-      $to_invent = Self::findFirst("userid = $to and itemid = $itemid");
-      if (!$to_invent) {
-          $to_invent = new Self();
-          $to_invent->itemid = $itemid;
-          $to_invent->userid = $to;
-          $to_invent->qty = $qty;
+      $to_invent = self::addItems($to, $itemid, $qty);
+      $from_invent = self::addItems($from, $itemid, 0 - $qty);
+      if ((!$to_invent) || (!$from_invent)) {
+        $status = FALSE;
       }
-      else {
-          $to_invent->qty += $qty;
-      }
-      $status = $to_invent->save();
-      $status = $status && $from_invent->save();
       return [$status,$to_invent,$from_invent];
   }
   

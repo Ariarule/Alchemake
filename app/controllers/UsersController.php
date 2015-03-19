@@ -71,7 +71,11 @@ class UsersController extends AlchemakeController {
   }
 
   public function completeLoginAction() {
-    $this->doDrops();
+    $user = $this->userThatIsLoggedIn();
+    if ($user) {
+      //should always happen
+      $user->doDrops();
+      }
     }
 
   public function loginErrorAction() {
@@ -113,37 +117,11 @@ class UsersController extends AlchemakeController {
       $this->dispatcher->forward(array("action"=>"login"));
     }
   }
-
-  private function doDrops() {
-    if ($this->userIsLoggedIn()) {
-      $user = $this->userLookupBy($this->session->get('userid'),'userid');
-      $delay        = $this->general_config->game->min_time_ay;
-      $allowence    = $this->general_config->game->min_time_ay;
-      $probability  = $this->general_config->game->ay_probability;
-        //supposed to be an integer between 0 and 100 inclusive
-        //NOT a float between 0.0 and 1.0
-
-      $time_from_ay    = time() - strtotime($user->last_allowence);
-      $time_from_drop  = time() - strtotime($user->last_drop);
-
-      if (($time_from_ay > $delay) && (rand(0,100) < $probability)) {
-        $allowence = $user->giveAllowence();
-        if ($allowence) {
-          $this->flashSession->notice("You have been given $allowence AY.");
-        }
-        if ((rand(1,86400) < $time_from_drop) && ($time_from_drop > 120)) {
-          if ($user->giveItems()) {
-            $this->flashSession->notice("New items! Check your inventory.");
-          }
-        }
-      }
-    }
-  }
   
-  protected function random_name($fnames,$lnames,$append = '') {
+  protected function randomName($fnames,$lnames,$append = '') {
     $fullname = [];
     foreach ([$fnames,$lnames] as $names) {
-      $fullname[] = $name[array_rand($name)];
+      $fullname[] = $names[array_rand($names)];
       }
     $fullname[] = $append;
     implode('_',$fullname);
