@@ -7,6 +7,8 @@ class Items extends Phalcon\Mvc\Model {
   public $basic;
   public $description;
   public $image;
+  const MIN_BASIC = 16;
+  const MAX_BASIC = 25;
 
   public static function clean($dirty_items) {
         //TODO: Fetch from the db a valid list of item ids to check
@@ -28,9 +30,13 @@ class Items extends Phalcon\Mvc\Model {
     $this->belongsTo('itemid','TradeDetails','itemid');
   }
 
-  function isItemBasic($itemno) {
+  public static function basicNumber($itemno) {
     //possible improvement: mysql call?
-    return (($itemno > 15) && ($itemno < 26));
+    return (($itemno >= self::MIN_BASIC) && ($itemno <= self::MAX_BASIC));
     }
+    
+  public function isBasic() {
+      return self::basicNumber($this->itemid);
+  }
 
 }
