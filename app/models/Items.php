@@ -30,8 +30,15 @@ class Items extends Phalcon\Mvc\Model {
     $this->belongsTo('itemid','TradeDetails','itemid');
   }
 
+  private static function randomBasicItemNumber() {
+      return rand(self::MIN_BASIC, self::MAX_BASIC);
+  }
+
+  public static function randomBasicItem() {
+      return self::findFirst(['itemid' => self::randomBasicItemNumber()]);
+  }
+  
   public static function basicNumber($itemno) {
-    //possible improvement: mysql call?
     return (($itemno >= self::MIN_BASIC) && ($itemno <= self::MAX_BASIC));
     }
     
