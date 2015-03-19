@@ -7,7 +7,7 @@ use Phalcon\Loader,
     Phalcon\Config\Adapter\Ini;
 
 try {
-  $di = new \Phalcon\DI\FactoryDefault();
+  $di = new FactoryDefault();
 
   $db_config      = new Ini('../app/config/db.ini');
   $general_config = new Ini('../app/config/general.ini');

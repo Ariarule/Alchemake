@@ -11,7 +11,8 @@ class AlchemartController extends AlchemakeController {
 
     $start_buy_power = $user->getInventory('itemid = 1')[0]->qty;
 
-    $posted_order = $this->request->getPost('order');
+    $posted_order = Items::clean($this->request->getPost('order') || []);
+    //don't try to pass null to clean
 
     if (!$posted_order) {
       return FALSE;
@@ -19,8 +20,6 @@ class AlchemartController extends AlchemakeController {
 
     $order = [];
     foreach ($posted_order as $itemid => $itemqty) {
-      $itemid = (int)$itemid;
-      $itemqty = (int)$itemqty;
       if ($itemid !== 1) { //you can't buy or sell money at a ratio not 1:1
         $order[$itemid]['qty'] = $itemqty;
         if ($itemqty >= 0) {
@@ -36,7 +35,6 @@ class AlchemartController extends AlchemakeController {
     foreach ($order as $itemid => $instructions) {
       $total += $instructions['qty'] * $instructions['price'];
     }
-
     $new_buying_power = $start_buy_power - $total;
 
     if ($new_buying_power < 0) {
@@ -67,5 +65,4 @@ class AlchemartController extends AlchemakeController {
   public function indexAction() {
 
   }
-
 }
