@@ -89,9 +89,8 @@ class UsersController extends AlchemakeController {
     $values['networkid'] = 'email'; //only email login by manual form
     $user = new Users();
 
-    if (!($this->nonce->check($this->request->getPost("time"),
-      $this->request->getPost("hash")) || $this->nonceError()) ||
-      ($user->save($values, //short-circuiting to skip save on nonceError
+    if (!$this->security->checkToken() ||
+      ($user->save($values, //short-circuiting to skip save on nonce error
       ['nickname','emailaddress','networkcredential','networkid']) === FALSE)) {
         foreach ($user->getMessages() as $message) {
           $this->flashSession->notice("$message");

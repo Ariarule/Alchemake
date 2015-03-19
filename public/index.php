@@ -15,9 +15,6 @@ try {
   $loader = new \Phalcon\Loader();
   $loader->registerDirs(['../app/controllers/',
                          '../app/models/'])->register();
-  $di->setShared('nonce',
-    new NonceController(
-      $general_config->nonce->password,$general_config->nonce->timeout));
   $di->setShared('db',new \Phalcon\Db\Adapter\Pdo\Mysql(array(
             "host" => $db_config->database->host,
             "username" => $db_config->database->username,

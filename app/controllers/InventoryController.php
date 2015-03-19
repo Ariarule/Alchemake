@@ -17,7 +17,7 @@ class InventoryController extends AlchemakeController {
   }
   
   public function listUserInventoryAction($userid) {
-      //this is fully public on purpose and without authentication
+      //this is fully public and without authentication on purpose
       $this->shallOutputJSON();
       $inventory_lister = Inventory::find(['userid' => $userid]);
       $inventory = [];
@@ -34,9 +34,8 @@ class InventoryController extends AlchemakeController {
   }
   
   public function alchemakeAction() {
-        if ($this->userIsLoggedIn()) {
-            $user = $this->userThatIsLoggedIn();
-        } else {
+        $user = $this->userThatIsLoggedIn();
+        if(!$user) {
             $this->dispatcher->forward(array(
                 "controller" => "Users",
                 'action' => 'login'));

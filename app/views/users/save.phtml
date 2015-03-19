@@ -11,12 +11,7 @@
   <label>Password:
     <input type="password" name="password"/>
   </label>
-  <?php
-  $nonce = $this->nonce->currentHash();
-  ?>
-  <input type="hidden" name="time"
-    value="<?= $nonce['time'] ?>" />
-  <input type="hidden" name="hash"
-    value="<?= $nonce['hash'] ?>" />
+  <input type="hidden" name="<?= $this->security->getTokenKey() ?>"
+    value="<?= $this->security->getToken() ?>" />
   <input type="submit" value="Save!" />
 </form>
