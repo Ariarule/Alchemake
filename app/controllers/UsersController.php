@@ -140,56 +140,7 @@ class UsersController extends AlchemakeController {
       }
     }
   }
-
-  public function show_card($user_pic,$userinfo) {
-    global $gen_time;
-    global $gen_nonce;
-    global $rank_texts;
-    global $userid;
-
-    echo "<form method=\"POST\" action=\"changenom.php?time=$gen_time&nonce=$gen_nonce\">\n";
-    echo "<div id=\"liscinfo\">";
-    if (is_string($user_pic[0]['pic_square']) && ($user_pic[0]['pic_square'] != '')) {
-      echo "<img src=\"{$user_pic[0]['pic_square']}\" style=\"float: left;\" height=\"50px\" width=\"50px\"/>\n";
-      }
-    echo "<h1 class=\"liscinfo\">Official Alchemaking&nbsp;Card</h1>\n<hr style=\"clear: both\"/>\n<ul class=\"liscinfo\"><li>Nom&nbsp;de&nbsp;Alchemake:<br />\n<input type=\"text\" style=\"border: 0px; border-bottom: 1px dotted black; background: #DDDDDD; opacity: 0.75;\" size=\"37\" value=\"{$userinfo['nickname']}\" name=\"newnom\">\n<button class=\"alchemakebutton\" type=\"submit\"><small>change Nom</small></button></li><li>Alchemake Guild #:<br />$userid</li><li>Rank: {$rank_texts[$userinfo['rank']]}</li><li>Status: In&nbsp;Good&nbsp;Standing</li></ul></div>\n"; //TODO: Implement Rank. Maybe insert facebook pic if available?
-    echo "</form>";
-    }
-
-  public function change_nom () {
-    ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo $base_url;?>alchemake.css?v=<?php echo $version;?>" />
-    <div id="page">
-    <?php
-
-    $proposed_nom = trim($_POST['newnom']);
-    if ((preg_match('|^\w+$|',$proposed_nom)) && (sizeof($proposed_nom > 3)) && (sizeof($proposed_nom < 40))) {
-      //FUTURE: Make is_valid_nom function
-      $proposed_nom = mysql_real_escape_string($proposed_nom); //should do nothing
-      $success = change_nom($userid,$proposed_nom);
-      if (!$success) {
-        $proposed_nom = $proposed_nom . "_" . rand(1500,1799);
-        $success = change_nom($userid,$proposed_nom);
-        }
-      if (!$success) { //SIC. Yes, the same test condition again. It might have changed. Or not.
-        trigger_error("Your Nom de Alchemake could not be changed to $proposed_nom -- someone else might already have this Nom.",E_USER_ERROR);
-        }
-      else {
-        echo "Your Nom de Alchemake has been changed to $proposed_nom.";
-        ?><br />
-        <a onclick="var attachment = {'name' : 'I changed my Nom de Alchemake.','caption':'{*actor*} is now known to the Alchemy guild as <?php echo $proposed_nom; ?>.','description':'You can use my Nom de Alchemake, <?php echo $proposed_nom; ?>, to trade items with me in Alchemake.'}; var actionLinks = [{ 'text': 'Alchemake', 'href': 'http://apps.facebook.com/alchemake/'}]; Facebook.streamPublish('',attachment,actionLinks);">Tell my friends my Nom de Alchemake.</a>
-        <?php
-        }
-      }
-    else {
-      ?>
-      Your Nom de Alchemake must be of letters and numbers, and at least 4 long, but not more than 39.
-      <?php
-      }
-    return_button();
-    ?></div><?php
-  }
-
+  
   protected function random_name($fnames,$lnames,$append = '') {
     $fullname = [];
     foreach ([$fnames,$lnames] as $names) {
