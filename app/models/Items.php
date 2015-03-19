@@ -39,14 +39,9 @@ class Items extends Phalcon\Mvc\Model {
       }
     }
 
-  function is_item_basic($itemno) {
+  function isItemBasic($itemno) {
     //possible improvement: mysql call?
-    if (($itemno > 15) && ($itemno < 26)) {
-      return TRUE;
-      }
-    else {
-      return FALSE;
-      }
-  }
+    return (($itemno > 15) && ($itemno < 26));
+    }
 
 }
