@@ -21,13 +21,10 @@ class AlchemakeController extends \Phalcon\Mvc\Controller {
   }
 
   protected function userThatIsLoggedIn() {
-    if ($this->userIsLoggedIn()) {
-      return $this->userLookupBy($this->session->get('userid'),$field = 'userid');
+    return ($this->userIsLoggedIn()
+            ? $this->userLookupBy($this->session->get('userid'),'userid')
+            : FALSE);
     }
-    else {
-      return FALSE;
-    }
-  }
 
   public function nonceError($text = "") {
       $this->flashSession->notice("Please resubmit this form. To
