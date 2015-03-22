@@ -23,7 +23,8 @@ function trade_table($trade,$possible_actions) {
     echo "</form>";
 }
 
-echo "<h2>Welcome {$userinfo->nickname}</h2>";
+echo "<h2>Welcome {$userinfo->nickname} "
+  . "<small><a href=\"/users/logout\">Logout?</a></small></h2>";
 $possible_f = ['T' => ['head' => 'Trades', 'f' =>
     function () use ($userinfo) { //trades
     $trade_types = [['field' => 'proposer',
