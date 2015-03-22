@@ -5,6 +5,7 @@
 #Project specific
 *.ini
 .htrouter.php
+vendor/
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
