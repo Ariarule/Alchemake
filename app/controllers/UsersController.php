@@ -47,7 +47,15 @@ class UsersController extends AlchemakeController {
       $user->save();
       $this->dispatcher->forward(["controller" => "users","action" => 'index']);
   }
+  
+  private function loginError () {
+    $this->dispatcher->forward(array('action'=>'loginError'));
+  }
 
+  public function loginErrorAction() {
+    //shows login error page
+  }
+  
   public function loginEmailAction() {
     //Accepts from the login form information on logging in using email
     //credentials
@@ -56,31 +64,32 @@ class UsersController extends AlchemakeController {
     $password = $this->request->getPost("password");
     $user = $this->userLookupBy($email);
 
-    if (!isset($email) || $email === NULL || $user->networkid !== 'email') {
+    if (!isset($email) 
+            || $email === NULL 
+            || $user->networkid !== 'email'
+            || !$user->checkNetworkcredential($password)) {
       //only allow manual logins for accounts which have an email credential
-      $this->dispatcher->forward(array('action'=>'loginError'));
-    }
-    elseif ($user->checkNetworkcredential($password)) {
-      $this->session->set('userid',$user->userid);
-      $this->flashSession->notice("You are now logged in, have fun!");
-      $this->dispatcher->forward(array('action'=>'index'));
+      $this->loginError();
     }
     else {
-      $this->dispatcher->forward(array('action'=>'loginError'));
+      $this->completeLogin($user);
     }
   }
 
-  public function completeLoginAction() {
-    $user = $this->userThatIsLoggedIn();
-    if ($user) {
-      //should always happen
-      $user->doDrops();
+  private function completeLogin($user) {
+    if ($user) {      
+      $this->session->set('userid',$user->userid);
+      $this->flashSession->notice("You are now logged in, have fun!");
+      $messages = $user->doDrops($this->config);
+      foreach ($messages as $message) {
+        $this->flashSession->notice($message);
+      }
+      $this->dispatcher->forward(array('action'=>'index'));
+      }
+    else {
+      $this->loginError();
       }
     }
-
-  public function loginErrorAction() {
-    //shows login error page
-  }
 
   public function saveAction() {
     //shows save form

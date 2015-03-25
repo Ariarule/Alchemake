@@ -73,43 +73,46 @@ class Users extends Phalcon\Mvc\Model {
   }
 
   private function giverUpdate($field) {
-    $this->$field = ' NOW() ';
-    $this->save();
+    $this->$field = date("Y-m-d H:i:s");
+    return $this->save();
   }
 
   public function giveItems() {
-    
-    $this->giverUpdate($this->last_drop);
-    return TRUE; //TODO: Only return true if actually added items to inventory
+    return $this->giverUpdate('last_drop')
+           && Inventory::inventoryDrop($this->userid);
   }
 
   public function giveAllowence($value = 100) {
-    //TODO: Write giveAllowence
-    $this->giverUpdate($this->last_allowence);
-    return $value;
+    return ((!Inventory::addItems($this->userid, Items::AY, $value)
+              && $this->giverUpdate('last_allowence'))
+            ? FALSE
+            : $value);
   }
 
-  public function doDrops() {
-    $delay = $this->general_config->game->min_time_ay;
-    $allowence = $this->general_config->game->min_time_ay;
-    $probability = $this->general_config->game->ay_probability;
+  public function doDrops($config) {
+    //TODO: Correctly access config by DI
+    $delay = $config->game->min_time_ay;
+    $probability = $config->game->ay_probability;
     //supposed to be an integer between 0 and 100 inclusive
     //NOT a float between 0.0 and 1.0
 
-    $time_from_ay = time() - strtotime($user->last_allowence);
-    $time_from_drop = time() - strtotime($user->last_drop);
-
+    $time_from_ay = time() - strtotime($this->last_allowence);
+    $time_from_drop = time() - strtotime($this->last_drop);
+    
+    $messages = [];
+    
     if (($time_from_ay > $delay) && (rand(0, 100) < $probability)) {
-      $allowence = $user->giveAllowence();
+      $allowence = $this->giveAllowence();
       if ($allowence) {
-        $this->flashSession->notice("You have been given $allowence AY.");
+        $messages[] = "You have been given $allowence AY.";
       }
       if ((rand(1, 86400) < $time_from_drop) && ($time_from_drop > 120)) {
-        if ($user->giveItems()) {
-          $this->flashSession->notice("New items! Check your inventory.");
+        if ($this->giveItems()) {
+          $messages[] = "New items! Check your inventory.";
         }
       }
     }
+    return $messages;
   }
 
 }

@@ -20,6 +20,7 @@ try {
             "username" => $db_config->database->username,
             "password" => $db_config->database->password,
             "dbname" => $db_config->database->dbname)));
+  $di->set('config', $general_config);
   $di->set('view',function () {
     $view = new View;
     $view->setViewsDir('../app/views/');

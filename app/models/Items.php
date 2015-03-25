@@ -9,6 +9,7 @@ class Items extends Phalcon\Mvc\Model {
   public $image;
   const MIN_BASIC = 16;
   const MAX_BASIC = 25;
+  const AY = 1;
 
   public static function clean($dirty_items) {
         //TODO: Fetch from the db a valid list of item ids to check

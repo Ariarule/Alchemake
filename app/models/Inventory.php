@@ -25,13 +25,13 @@ class Inventory extends Phalcon\Mvc\Model {
       return $inventory_line->save();
   }
   
-  public function inventoryDrop($userid) {
+  public static function inventoryDrop($userid) {
     $number_of_items = rand(2,4);
     $success_on_all = TRUE;
     for ($i = 0; $i < $number_of_items; $i++) {
       $itemno = Items::randomBasicItem()->itemid;
       $qty = rand(1,3);
-      if(!add_items($userid,$itemno,$qty)) {
+      if(!self::addItems($userid,$itemno,$qty)) {
         $success_on_all = FALSE;
         }
       }
