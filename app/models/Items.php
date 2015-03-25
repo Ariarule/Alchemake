@@ -36,7 +36,8 @@ class Items extends Phalcon\Mvc\Model {
   }
 
   public static function randomBasicItem() {
-      return self::findFirst(['itemid' => self::randomBasicItemNumber()]);
+      return self::findFirst(['conditions' =>
+          'itemid = ' . self::randomBasicItemNumber()]);
   }
   
   public static function basicNumber($itemno) {
