@@ -83,8 +83,8 @@ class Users extends Phalcon\Mvc\Model {
   }
 
   public function giveAllowence($value = 100) {
-    return ((!Inventory::addItems($this->userid, Items::AY, $value)
-              && $this->giverUpdate('last_allowence'))
+    $this->giverUpdate('last_allowence');
+    return (!Inventory::addItems($this->userid, Items::AY, $value)
             ? FALSE
             : $value);
   }
