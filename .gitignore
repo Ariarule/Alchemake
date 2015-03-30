@@ -64,3 +64,5 @@ nbactions.xml
 nb-configuration.xml
 .nb-gradle/
 /nbproject/
+
+alchemake.testsheet.fods
