@@ -18,9 +18,14 @@ function listItem($item_to_lookup,$qtys,$name) {
 }
 
 function listItems($items_to_lookup,$qtys,$name) {
+    $s = '';
     foreach ($items_to_lookup as $item_to_lookup) {
-        echo listItem($item_to_lookup,$qtys,$name);
+        $s .= listItem($item_to_lookup,$qtys,$name);
     }
+    if ($s === '') {
+      echo "<li>[Nothing]</li>";
+    }
+    echo $s;
 }
 
 $proposer_items = itemInformation($items);
