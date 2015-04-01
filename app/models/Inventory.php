@@ -67,9 +67,7 @@ class Inventory extends Phalcon\Mvc\Model {
   public static function transferItem($from,$to,$itemid,$qty) {
       $to_invent = self::addItems($to, $itemid, $qty);
       $from_invent = self::addItems($from, $itemid, 0 - $qty);
-      if ((!$to_invent) || (!$from_invent)) {
-        $status = FALSE;
-      }
+      $status = !((!$to_invent) || (!$from_invent));
       return [$status,$to_invent,$from_invent];
   }
   

@@ -120,25 +120,30 @@ class TradeController extends AlchemakeController {
     
     public function acceptAction() {
         $trade = Trades::findFirst($this->request->getPost('tradeid','int'));
-        if (!$trade || $this->userThatIsLoggedIn() !== $trade->proposed_userid) {
+        if (!$trade 
+                || ($this->userThatIsLoggedIn()->userid 
+                        !== $trade->proposed_userid)) {
             $this->flashSession->error("You cannot accept this trade");
-            $this->dispatcher->forward(['controller' => 'users','action' => 'index']);
         }
-        $trade->status = 'completed';
-        $proposer = $trade->proposer_userid;
-        $proposed = $trade->proposed_userid;
-        foreach ($trade->tradedetails as $trade_detail) {
-            if ($trade_detail->direction == 'TO_PROPOSER') {
-                $to = $proposer; $from = $proposed;
-            }
-            else {
-                $to = $proposed; $from = $proposer;
-            }
-            Inventory::transferItem($from,
-                    $to,
-                    $trade_detail->itemid,
-                    $trade_detail->qty);
+        else {
+          $trade->status = 'completed';
+          $proposer = $trade->proposer_userid;
+          $proposed = $trade->proposed_userid;
+          foreach ($trade->tradedetails as $trade_detail) {
+              if ($trade_detail->direction == 'TO_PROPOSER') {
+                  $to = $proposer; $from = $proposed;
+              }
+              else {
+                  $to = $proposed; $from = $proposer;
+              }
+              Inventory::transferItem($from,
+                      $to,
+                      $trade_detail->itemid,
+                      $trade_detail->qty);
+          }
+          $trade->save();
         }
-        $trade->save();
+      $this->dispatcher->forward(['controller' => 'users',
+                'action' => 'index']);
       }
     }
