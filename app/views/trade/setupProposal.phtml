@@ -1,0 +1,34 @@
+<?php
+$this->flashSession->output();
+
+$users = USERS::find();
+$inventory = INVENTORY::find(['conditions' => '1 group by itemid']);
+    //this is not the ideal way to do this but does give the format
+    //expected by InventoryTable
+?>
+<!--TODO: AJAXify this form-->
+<form action="/trade/confirmProposal/" method="GET">
+    <!--Displays confirmation, confirmation page actually
+    makes changes and so should use POST-->
+        <?php
+        foreach ($items as $itemid => $qty) {
+        echo "<input type=\"hidden\" name=\"items[{$itemid}]\"" 
+            . " value=\"{$qty}\" />";
+        }
+        ?>
+    Ask <select name="proposed_userid">
+    <?php
+    foreach ($users as $user) {
+        echo "<option value=\"{$user->userid}\">$user->nickname</option>";
+    }
+    ?>
+    </select> for:
+    <?php
+    $this->partial('shared/inventoryTable',
+        ['omitform' => TRUE,
+         'omitqty' => TRUE,
+         'item_array_name' => 'asking_for',
+         'inventory' => $inventory]);
+    ?>
+    <button type="submit">Confirm Trade (next screen)</button>
+</form>

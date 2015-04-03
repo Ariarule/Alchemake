@@ -1,0 +1,100 @@
+<?php $this->flashSession->output();
+
+function trade_table($trade,$possible_actions) {
+    $trade_details = ['FROM_PROPOSER' => [], 'TO_PROPOSER' => []];
+    foreach ($trade->tradeDetails as $trade_detail) {
+        $trade_details[$trade_detail->direction][] = $trade_detail;
+    }
+    echo "<table><thead><tr><td>{$trade->proposer->nickname}</td>";
+    echo "<td>{$trade->proposed->nickname}</td></tr></thead><tbody><tr>";
+    foreach ($trade_details as $party_trade_details) {
+        echo "<td><ul>";
+        foreach ($party_trade_details as $trade_detail) {
+            echo "<li>{$trade_detail->qty}x {$trade_detail->Items->name}</li>";
+        }
+        echo "</ul></td>";
+    }
+    echo '</tr></tbody></table><form method= "POST"><input type="hidden" '
+        . "name=\"tradeid\" value=\"{$trade->tradeid}\">";
+    foreach ($possible_actions as $possible_action) {
+        echo "<button type=\"submit\" formaction=\"/trade/{$possible_action}\">"
+        . ucwords($possible_action) . "</button>";
+    }
+    echo "</form>";
+}
+
+echo "<h2>Welcome {$userinfo->nickname} "
+  . "<small><a href=\"/users/logout\">Logout?</a></small></h2>";
+$possible_f = ['T' => ['head' => 'Trades', 'f' =>
+    function () use ($userinfo) { //trades
+    $trade_types = [['field' => 'proposer',
+                        'label' => 'You have suggested:',
+                        'actions' => ['withdraw']],
+                    ['field' => 'proposed',
+                        'label' => 'Others have suggested:',
+                        'actions' => ['accept','reject', 'counteroffer']]];
+        foreach ($trade_types as $trade_type) {
+            echo "<h4>{$trade_type['label']}</h4>";
+            $trades = Trades::findAcceptableByUserId($userinfo->userid,
+                    $trade_type['field']);
+            if ($trades->count() > 0) {
+                foreach ($trades as $trade) {
+                    trade_table($trade, $trade_type['actions']);
+                }
+            }
+            else {
+                echo "...no pending trades.";
+            }
+        }
+  }],
+  'I' => ['head' => 'Inventory', 'f' => function () use ($userinfo) {
+    if ($userinfo->inventory->count() > 0) {
+     $form_buttons = '<button formaction="/Trade/setupProposal" type="submit">Trade</button>&nbsp;'
+     . '<button formaction="/Inventory/alchemake" type="submit">Alchemake'
+     .'</button>';
+     $this->partial('shared/inventoryTable',
+        ['form_buttons' => $form_buttons,
+         'inventory' => $userinfo->inventory]);
+}
+else {
+  echo "You have no inventory right now. :(";
+}   
+
+  }],
+
+  'U' => ['head' => 'Usercard', 'f' => function () use ($userinfo) {
+    ?><!--
+    <?php echo "{$userinfo->userid}"; ?>
+    -->
+    <div id="userinfo">
+      <ul>
+        <li>You are known as 
+            <form action="/users/rename/" method="POST">
+                <input type="text" name="nickname" 
+                         value="<?= $userinfo->nickname ?>">
+            </form>
+        </li>
+        <li>Alchemake Guild Relationship:<ul>
+          <!-- TODO: Rank -->
+          <li>Last basic item delivery: <?= $userinfo->last_drop ?></li>
+          <li>Last AY Salary: <?= $userinfo->last_allowence ?></li></ul></li>
+        <li>Email Address: <?= $userinfo->emailaddress ?></li>
+      </ul>
+    </div>
+    <?php
+  }]];
+
+foreach (str_split($userinfo->main_order,1) as $i => $section) {
+  if ($i === 1) {
+      $possible_f[$section]['head'] = $possible_f[$section]['head'] 
+        . '<form method="POST" action="/users/reorder">'
+        . '<button name="direction" value="-1">&uarr;</button>'
+        . '<button name="direction" value="1">&darr;</button>'
+        . '</form>';
+  }
+  if (isset($possible_f[$section])) {
+    echo "<h3>{$possible_f[$section]['head']}</h3>";
+    $possible_f[$section]['f']();
+  }
+}
+?>

@@ -1,0 +1,45 @@
+<form method="POST" action="/trade/propose/">
+<?php
+function itemInformation($item_qty_array) {
+    $item_ids = array_keys($item_qty_array);
+    return Items::Find(['conditions' => "itemid in"
+        . " (" . implode(',',$item_ids) . ")"]);
+}
+
+function listItem($item_to_lookup,$qtys,$name) {
+    if ($qtys[$item_to_lookup->itemid] > 0) {
+        return "<li>{$qtys[$item_to_lookup->itemid]}x {$item_to_lookup->name}"
+        . "<input type=\"hidden\" name=\"{$name}[{$item_to_lookup->itemid}]\" "
+        . "value=\"{$qtys[$item_to_lookup->itemid]}\" /></li>";
+    }
+    else {
+        return '';
+    }
+}
+
+function listItems($items_to_lookup,$qtys,$name) {
+    $s = '';
+    foreach ($items_to_lookup as $item_to_lookup) {
+        $s .= listItem($item_to_lookup,$qtys,$name);
+    }
+    if ($s === '') {
+      echo "<li>[Nothing]</li>";
+    }
+    echo $s;
+}
+
+$proposer_items = itemInformation($items);
+$proposed_items = itemInformation($asking_for); 
+    //there is slight redundancy that we can get the same item's info twice
+
+echo "Do you really want to trade <ul>";
+listItems($proposer_items,$items,'items');
+echo "</ul> for these items from {$proposed->nickname}"
+. "<input type=\"hidden\" name=\"proposed\" value=\"{$proposed->userid}\" />"
+. "<ul>";
+listItems($proposed_items,$asking_for,'asking_for');
+echo "</ul>";
+?>
+<button type="submit">Confirm</button>
+<button type="submit" formaction="/users/index">No</button>
+</form>

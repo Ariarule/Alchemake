@@ -1,0 +1,24 @@
+<?php
+use \Phalcon\Tag;
+$this->tag->setDocType(Tag::HTML5);
+echo $this->tag->getDocType();
+?>
+
+
+<html>
+<head>
+  <title>Alchemake</title>
+  <style>
+    label {
+      display: block;
+    }
+    #userinfo {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<h1>Alchemake</h1><!--main-->
+<?php echo $this->getContent() ?>
+</body>
+</html>

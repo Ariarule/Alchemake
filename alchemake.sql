@@ -1,44 +1,8 @@
--- phpMyAdmin SQL Dump
--- version 3.3.10.4
--- http://www.phpmyadmin.net
---
--- Host: ...
--- Generation Time: Mar 12, 2012 at 12:23 PM
--- Server version: 5.1.53
--- PHP Version: 5.2.17
-
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
---
--- Database: `alchemake`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ay_price_history`
---
-
-CREATE TABLE IF NOT EXISTS `ay_price_history` (
-  `week` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `price_100ay` float unsigned NOT NULL,
-  `current` tinyint(1) NOT NULL,
-  `profit` float unsigned NOT NULL,
-  `AY_Stock` int(10) unsigned NOT NULL,
-  `allowence` int(10) unsigned NOT NULL,
-  `slope` float NOT NULL,
-  `intercept` float NOT NULL,
-  PRIMARY KEY (`week`),
-  KEY `current` (`current`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=178 ;
-
--- --------------------------------------------------------
+-- TODO: Possibly have combos and suggestions look to
+-- recipe table, with the recipe ID moved from suggestions
+-- to combos when accepted
 
 --
 -- Table structure for table `combinations`
@@ -51,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `combinations` (
   `ingredient3_itemid` int(10) unsigned NOT NULL DEFAULT '0',
   `preq_tool_itemid` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`ingredient1_itemid`,`ingredient2_itemid`,`ingredient3_itemid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+);
 
 -- --------------------------------------------------------
 
@@ -67,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `combo-suggest` (
   `suggestion` varchar(255) NOT NULL,
   `suggestionid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`suggestionid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=57 ;
+);
 
 -- --------------------------------------------------------
 
@@ -80,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `inventory` (
   `itemid` int(10) unsigned NOT NULL,
   `qty` int(10) unsigned NOT NULL,
   PRIMARY KEY (`userid`,`itemid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+);
 
 -- --------------------------------------------------------
 
@@ -96,21 +60,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `image` varchar(255) NOT NULL,
   PRIMARY KEY (`itemid`),
   KEY `basic` (`basic`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=102 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `pp_txns`
---
-
-CREATE TABLE IF NOT EXISTS `pp_txns` (
-  `userid` varchar(255) NOT NULL,
-  `txnid` varchar(40) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `qty_notmoney_purchased` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`txnid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+);
 
 -- --------------------------------------------------------
 
@@ -120,12 +70,12 @@ CREATE TABLE IF NOT EXISTS `pp_txns` (
 
 CREATE TABLE IF NOT EXISTS `tradedetails` (
   `tradeid` bigint(20) NOT NULL,
-  `proposer_itemid` int(10) unsigned NOT NULL,
-  `proposer_qty` int(10) unsigned NOT NULL,
-  `proposed_itemid` int(10) unsigned NOT NULL,
-  `proposed_qty` int(10) unsigned NOT NULL,
+  `direction` enum('TO_PROPOSER','FROM_PROPOSER') NOT NULL,
+  `party` enum('PROPOSER','PROPOSED') NOT NULL,
+  `itemid` int(10) unsigned NOT NULL,
+  `qty` int(10) unsigned NOT NULL,
   KEY `tradeid` (`tradeid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+);
 
 -- --------------------------------------------------------
 
@@ -140,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `trades` (
   `status` enum('pending','rejected','counteroffered','withdrawn','complete') NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`tradeid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=64 ;
+);
 
 -- --------------------------------------------------------
 
@@ -150,15 +100,14 @@ CREATE TABLE IF NOT EXISTS `trades` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `userid` varchar(255) NOT NULL,
-  `networkid` varchar(255) NOT NULL,
-  `network` enum('none','facebook') NOT NULL,
+  `networkid` enum('email') NOT NULL,
+  `emailaddress` varchar(255) NOT NULL,
+  `networkcredential` varchar(255) NOT NULL,
   `nickname` varchar(60) NOT NULL,
   `rank` tinyint(3) unsigned NOT NULL,
   `last_drop` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_allowence` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `campaign` varchar(64) DEFAULT 'revenge',
-  `session` smallint(5) DEFAULT '1',
-  `main_order` varchar(4) NOT NULL DEFAULT 'CTIU' COMMENT 'Order for index.php C=Campaign, T=Trade, I=Items, U=Userinfo',
+  `main_order` varchar(4) NOT NULL DEFAULT 'TIU' COMMENT 'Order for index.php T=Trade, I=Items, U=Userinfo',
   PRIMARY KEY (`userid`),
   UNIQUE KEY `nickname` (`nickname`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+);

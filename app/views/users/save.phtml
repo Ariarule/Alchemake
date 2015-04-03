@@ -1,0 +1,17 @@
+<?php $this->flashSession->output() ?>
+
+<p>Enter a password and email address to save your game progress: </p>
+<form method="POST" action="new">
+  <label>Nickname:
+    <input type="text" placeholder="Hello, my name is..." name="nickname"/>
+  </label>
+  <label>Email:
+    <input type="email" placeholder="you@example.com" name="emailaddress" />
+  </label>
+  <label>Password:
+    <input type="password" name="password"/>
+  </label>
+  <input type="hidden" name="<?= $this->security->getTokenKey() ?>"
+    value="<?= $this->security->getToken() ?>" />
+  <input type="submit" value="Save!" />
+</form>

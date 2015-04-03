@@ -1,0 +1,6 @@
+[paths]
+img=http://img.alchemake.ariarule.com/
+
+[game]
+min_time_ay = 300
+ay_probability = 50
