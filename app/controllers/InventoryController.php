@@ -8,12 +8,10 @@ class InventoryController extends AlchemakeController {
   }
 
   private function hasTool($user,$itemid) {
-    $tool = Inventory::findFirst(['userid' => $user->userid,
-        'itemid' => $itemid]);
-    if (!$tool || $tool->qty < 1) {
-        return FALSE;
-    }
-    return TRUE;
+    $tool = Inventory::findFirst(['conditions' 
+        => "userid = {$user->userid} and "
+         . "itemid = $itemid"]);
+    return ($tool && ($tool->qty >= 1));
   }
   
   public function listUserInventoryAction($userid) {
@@ -53,7 +51,6 @@ class InventoryController extends AlchemakeController {
             $this->flashSession->notice("To alchemake,"
                     . " select a quantity of 2 or 3 items.");
         } else {
-            $ingredients = [];
             $newqty = min($items); //can only make as many as the lowest prereq.
             $item_numbers = array_keys($items);
             sort($item_numbers);
@@ -65,11 +62,13 @@ class InventoryController extends AlchemakeController {
                 //but for now proceed as-is
                 $item_numbers[] = 0;
             }
+            $conditions = [];
             foreach ($item_numbers as $i => $item_number) {
-                $ingredients["ingredient" . ($i + 1) . "_itemid"]
-                        = $item_number;
+                $conditions[] 
+                        = " ingredient" . ($i + 1) . "_itemid = $item_number ";
             }
-            $combination = Combinations::findfirst($ingredients);
+            $combination = Combinations::findfirst([
+                'conditions' => implode(" and ",$conditions)]);
 
             if (!$combination) {
                 $this->flashSession->notice("Sorry, these items are alchemically "
