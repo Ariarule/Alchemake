@@ -74,8 +74,10 @@ else {
                          value="<?= $userinfo->nickname ?>">
             </form>
         </li>
-        <li>Basic item delivery: <?= explode($userinfo->last_drop,' ')[0] ?></li>
-        <li>AY Allowence: <?= explode($userinfo->last_allowence,' ')[0] ?></li>
+        <li>Alchemake Guild Relationship:<ul>
+          <!-- TODO: Rank -->
+          <li>Last basic item delivery: <?= $userinfo->last_drop ?></li>
+          <li>Last AY Salary: <?= $userinfo->last_allowence ?></li></ul></li>
         <li>Email Address: <?= $userinfo->emailaddress ?></li>
       </ul>
     </div>
