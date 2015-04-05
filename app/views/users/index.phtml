@@ -47,7 +47,10 @@ $possible_f = ['T' => ['head' => 'Trades', 'f' =>
             }
         }
   }],
-  'I' => ['head' => 'Inventory', 'f' => function () use ($userinfo) {
+  'I' => ['head' => 'Inventory '
+      . '<a href="/alchemart"><aside>'
+      . '(Trade AY for Items at the Store)'
+      . '</aside></a>', 'f' => function () use ($userinfo) {
     if ($userinfo->inventory->count() > 0) {
      $form_buttons = '<button formaction="/Trade/setupProposal" type="submit">Trade</button>&nbsp;'
      . '<button formaction="/Inventory/alchemake" type="submit">Alchemake'

@@ -77,12 +77,12 @@ class UsersController extends AlchemakeController {
   }
 
   private function completeLogin($user) {
-    if ($user) {      
+    if ($user) {
       $this->session->set('userid',$user->userid);
       $this->flashSession->notice("You are now logged in, have fun!");
       $messages = $user->doDrops($this->config);
       foreach ($messages as $message) {
-        $this->flashSession->notice($message);
+        $this->flashSession->success($message);
       }
       $this->dispatcher->forward(array('action'=>'index'));
       }
