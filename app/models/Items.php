@@ -14,8 +14,10 @@ class Items extends Phalcon\Mvc\Model {
   public static function clean($dirty_items) {
         //TODO: Fetch from the db a valid list of item ids to check
         $clean = [];
-        foreach ($dirty_items as $item_id => $qty) {
-            $clean[(int)$item_id] = (int)$qty;
+        if (is_array($dirty_items)) {
+          foreach ($dirty_items as $item_id => $qty) {
+              $clean[(int)$item_id] = (int)$qty;
+          }
         }
         return $clean;
     }
