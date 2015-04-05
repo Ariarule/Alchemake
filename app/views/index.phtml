@@ -6,19 +6,16 @@ echo $this->tag->getDocType();
 
 
 <html>
-<head>
-  <title>Alchemake</title>
-  <style>
-    label {
-      display: block;
-    }
-    #userinfo {
-      display: block;
-    }
-  </style>
-</head>
-<body>
-<h1>Alchemake</h1><!--main-->
-<?php echo $this->getContent() ?>
-</body>
+  <head>
+    <link href="/css/alchemake.css" rel="stylesheet" type="text/css" />
+    <title>Alchemake</title>
+  </head>
+  <body>
+    <section id="page">
+        <h1><a href="/">
+                Alchemake
+            </a></h1>
+      <?php echo $this->getContent() ?>
+    </section>
+  </body>
 </html>
