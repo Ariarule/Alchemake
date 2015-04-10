@@ -22,7 +22,7 @@ class Inventory extends Phalcon\Mvc\Model {
       else {
           $inventory_line->qty += $qty; //note quantity can be negative
       }
-      return $inventory_line->save();
+      return ($qty === 0) || $inventory_line->save();
   }
   
   public static function inventoryDrop($userid) {
@@ -38,6 +38,12 @@ class Inventory extends Phalcon\Mvc\Model {
     return $success_on_all;
   }
 
+  public static function userItemQty($userid,$itemid) {
+    $inventory_line = self::findFirst(['conditions' => "userid = $userid "
+            . "and itemid = $itemid"]);
+    return ($inventory_line ? $inventory_line->qty : 0);
+  }
+  
   private static function proposedQtys($user) {
         $items = [];
         $proposed_trades = $user->getTrades("proposer_userid = {$user->userid}"

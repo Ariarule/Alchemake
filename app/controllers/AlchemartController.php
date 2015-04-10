@@ -11,30 +11,31 @@ class AlchemartController extends AlchemakeController {
 
     $start_buy_power = $user->getInventory('itemid = 1')[0]->qty;
 
-    $posted_order = Items::clean($this->request->getPost('order') 
+    $posted_order = array_filter(Items::clean($this->request->getPost('order') 
             ? $this->request->getPost('order')
-            : []);
-    //don't try to pass null to clean
+            : [])); //don't try to pass null to clean
 
     if ($posted_order) {
       $order = [];
       foreach ($posted_order as $itemid => $itemqty) {
-        if ($itemid !== 1) { //you can't buy or sell money at a ratio not 1:1
-          $order[$itemid]['qty'] = $itemqty;
-          if ($itemqty >= 0) {
-            $order[$itemid]['price'] = 50;
-          }
-          else { //sell to the store
-            $order[$itemid]['price'] = 40;
-          }
+        if ($itemid === 1) { //you can't buy or sell money
+          continue;
+        }
+        $order[$itemid]['qty'] = $itemqty;
+        $order[$itemid]['price'] = 50;
+        if ($itemqty < 0) { //sell to the store
+          $order[$itemid]['price'] = 40;
+          $order[$itemid]['qty'] = max([$order[$itemid]['qty'], 
+                  0 - Inventory::userItemQty($user->userid, $itemid)]);
         }
       }
+      array_filter($order, function ($a) {return $a['qty'];}); //rm zeroed lines
 
       $total = 0;
       foreach ($order as $itemid => $instructions) {
-        $total += $instructions['qty'] * $instructions['price'];
+        $total -= $instructions['qty'] * $instructions['price'];
       }
-      $new_buying_power = $start_buy_power - $total;
+      $new_buying_power = $start_buy_power + $total;
 
       if ($new_buying_power < 0) {
         $this->flashSession->notice("You do not have sufficent AY for this "
@@ -42,19 +43,10 @@ class AlchemartController extends AlchemakeController {
         $this->dispatcher->forward(['action'=>'index']);
       }
       else {
-        $resultset_query = ["itemid = 1"]; //special value for money
         foreach ($order as $itemid => $instructions) {
-          $resultset_query[] = "itemid = $itemid";
-        }
-        $resultset_query = implode(' or ',$resultset_query);
-        $inventory_to_update = $user->getInventory($resultset_query);
-
-        $order[1] = array('qty' => 0 - $total);
-
-        foreach ($inventory_to_update as $line_to_update) {
-          $line_to_update->qty += $order[$line_to_update->itemid]['qty'];
-          $line_to_update->save();
-        }
+          Inventory::addItems($user->userid, $itemid, $instructions['qty']);
+        }        
+        Inventory::addItems($user->userid, 1, $total);
         $this->flashSession->success("Success! Your inventory has been updated.");
         $this->flashSession->notice("You currently have AY $new_buying_power");
         }
