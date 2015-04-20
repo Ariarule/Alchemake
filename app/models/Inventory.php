@@ -12,7 +12,7 @@ class Inventory extends Phalcon\Mvc\Model {
   }
 
   public static function addItems($userid,$itemno,$qty) {
-    $inventory_line = Self::findFirst("userid = $userid and itemid = $itemno");
+    $inventory_line = self::findFirst("userid = $userid and itemid = $itemno");
       if (!$inventory_line) {
           $inventory_line = new Self();
           $inventory_line->itemid = $itemno;

@@ -35,7 +35,7 @@ class InventoryController extends AlchemakeController {
         $user = $this->userThatIsLoggedIn();
         if(!$user) {
             $this->dispatcher->forward(array(
-                "controller" => "Users",
+                "controller" => "users",
                 'action' => 'login'));
         }
 
@@ -119,6 +119,6 @@ class InventoryController extends AlchemakeController {
                 }
             }
         }
-        $this->dispatcher->forward(array("controller"=>"Users",'action'=>'index'));
+        $this->dispatcher->forward(array("controller"=>"users",'action'=>'index'));
   }
 }

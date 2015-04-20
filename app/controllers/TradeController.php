@@ -42,7 +42,7 @@ class TradeController extends AlchemakeController {
         if (count($shorts) > 0) {
             $this->flashSession->error("You don't have enough of an item"
                     . " to suggest this trade.");
-            $this->dispatcher->forward(['controller'=>'Users','action'=>'index']);
+            $this->dispatcher->forward(['controller'=>'users','action'=>'index']);
         }
 
         $trade_details = 

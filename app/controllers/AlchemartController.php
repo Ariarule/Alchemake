@@ -6,7 +6,7 @@ class AlchemartController extends AlchemakeController {
       $user = $this->userThatIsLoggedIn();
     }
     else {
-      $this->dispatcher->forward(['controller'=>'Users','action'=>'login']);
+      $this->dispatcher->forward(['controller'=>'users','action'=>'login']);
     }
 
     $start_buy_power = $user->getInventory('itemid = 1')[0]->qty;

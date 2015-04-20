@@ -52,8 +52,8 @@ $possible_f = ['T' => ['head' => 'Trades', 'f' =>
       . '(Trade AY for Items at the Store)'
       . '</aside></a>', 'f' => function () use ($userinfo) {
     if ($userinfo->inventory->count() > 0) {
-     $form_buttons = '<button formaction="/Trade/setupProposal" type="submit">Trade</button>&nbsp;'
-     . '<button formaction="/Inventory/alchemake" type="submit">Alchemake'
+     $form_buttons = '<button formaction="/trade/setupProposal" type="submit">Trade</button>&nbsp;'
+     . '<button formaction="/inventory/alchemake" type="submit">Alchemake'
      .'</button>';
      $this->partial('shared/inventoryTable',
         ['form_buttons' => $form_buttons,
