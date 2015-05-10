@@ -1,5 +1,4 @@
 <?php
-
 use Phalcon\Loader,
     Phalcon\DI\FactoryDefault,
     Phalcon\Mvc\Application,
@@ -38,3 +37,4 @@ catch (Exception $e) {
   //TODO: Exception Logging
   echo $e->getMessage();
   }
+  

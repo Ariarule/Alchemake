@@ -23,6 +23,7 @@
       . " &ndash; "
       . "{$inventory_line->items->description}</td>"
       . '<td><input type="number" step="1" min="0" value="0"'
+      .  " class='itemqty' "
       .  " name='{$item_array_name}[{$inventory_line->items->itemid}]'"
       .  ($omitqty ? '' : " max='{$inventory_line->qty}'")
       .  " /></td>"

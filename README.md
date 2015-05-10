@@ -1,12 +1,10 @@
-Alchemake is a game that I originally created as a hobby in 2010. Reliance on the old Facebook APIs caused it to stop working in late 2011 or so. In early 2015 it will be relauched as stand-alone site. -- Nic, 2015-02-16
+Alchemake is a game that I originally created as a hobby in 2010. Reliance on 
+older Facebook APIs caused it to stop working in late 2011 or so. In early 2015,
+I relauched it as stand-alone site and demo project at
+ http://alchemake.ariarule.com/ 
 
-------
-
-Installation:
-
-* Rename db.ini.format to db.ini and fill in the database connection settings (MySQL or MariaDB)
-* Rename and fill out the settings in the general.ini file
-* Run alchemake.sql against the database to create the tables.
+The game is a work in progress. It is entirely playable, but not too fun
+yet, and there are still a few rough edges.-- Nic, 2015-05-10
 
 ------
 

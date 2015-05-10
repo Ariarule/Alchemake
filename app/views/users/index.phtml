@@ -96,8 +96,10 @@ foreach (str_split($userinfo->main_order,1) as $i => $section) {
         . '</form>';
   }
   if (isset($possible_f[$section])) {
+    echo "<section id=\"userinfo_$section\">";
     echo "<h3>{$possible_f[$section]['head']}</h3>";
     $possible_f[$section]['f']();
+    echo "</section>";
   }
 }
 ?>
